@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" package="com.payyourself.trading.beneficiary">
+ <class name="com.payyourself.trading.beneficiary.Beneficiary" table="beneficiary">
+  <id name="beneficiaryId" type="long">
+   <column name="beneficiary_id" not-null="true" sql-type="BIGINT"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="name" type="string">
+   <column name="name" sql-type="VARCHAR(30)"/>
+  </property>
+  <property generated="never" lazy="false" name="type" type="com.payyourself.currency.code.CurrencyCode">
+   <column name="type" sql-type="VARCHAR(3)"/>
+  </property>
+  <many-to-one
+   class="com.payyourself.trading.beneficiary.details.BeneficiaryDetails"
+   name="details" unique="true"/>
+ </class>
+</hibernate-mapping>

@@ -1,0 +1,110 @@
+digraph TableGraph {
+  compound=true;
+    bgcolor="white"; 
+    fontcolor="black"; fontname="Helvetica"; fontsize="10.0"; 
+    ranksep="equally"; 
+    label="Table Graph"; 
+    URL="http://tools.hibernate.org";
+  edge [
+        color="lightgrey", 
+        fontcolor="black", 
+        fontname="Helvetica", 
+        fontsize="8.0",         
+        labelangle=-25.0, 
+        labeldistance=1.5
+        headport=nw,
+        tailport=se
+        ];
+  node [
+       fontcolor="black",
+       fontname="Helvetica", 
+       fontsize="10.0", 
+       shape=record, 
+       fillcolor="yellow", 
+       style="solid,filled"];
+
+/* TODO: multi schema tables */
+  /* Node chain_links */
+  chain_links [ label = "{ chain_links| <linkid>linkid\l | <elt>elt\l | <idx>idx\l }" ]  
+  
+  /* edges/nodes for chain_links */
+     chain_links -> chains [ 
+        label="FKFEBDB4BB153A76A0" 
+        ]
+  /* Node chains */
+  chains [ label = "{ chains| <chainid>chainid\l }" ]  
+  
+  /* edges/nodes for chains */
+  /* Node currencytypes */
+  currencytypes [ label = "{ currencytypes| <code>code\l | <ratetobase>ratetobase\l | <symbol>symbol\l }" ]  
+  
+  /* edges/nodes for currencytypes */
+  /* Node group_traders */
+  group_traders [ label = "{ group_traders| <traderid>traderid\l | <traders>traders\l | <idx>idx\l }" ]  
+  
+  /* edges/nodes for group_traders */
+     group_traders -> tradergroup [ 
+        label="FKC36EE4E510376F2C" 
+        ]
+  /* Node pycurrency */
+  pycurrency [ label = "{ pycurrency| <currencyid>currencyid\l | <value>value\l | <basevalue>basevalue\l | <currencycode>currencycode\l }" ]  
+  
+  /* edges/nodes for pycurrency */
+     pycurrency -> currencytypes [ 
+        label="FK16C5E51A70F7F4BD" 
+        ]
+  /* Node registrationinfo */
+  registrationinfo [ label = "{ registrationinfo| <registrationid>registrationid\l | <username>username\l | <firstname>firstname\l | <lastname>lastname\l | <password>password\l | <email>email\l }" ]  
+  
+  /* edges/nodes for registrationinfo */
+  /* Node trade */
+  trade [ label = "{ trade| <tradeid>tradeid\l }" ]  
+  
+  /* edges/nodes for trade */
+  /* Node tradelinks */
+  tradelinks [ label = "{ tradelinks| <linkid>linkid\l | <buyersellcurrencymismatch>buyersellcurrencymismatch\l | <buyergroupid>buyergroupid\l | <sellergroupid>sellergroupid\l | <buyerbuycurrencymismatch>buyerbuycurrencymismatch\l }" ]  
+  
+  /* edges/nodes for tradelinks */
+     tradelinks -> tradergroup [ 
+        label="FK707E9CD5C7270CA" 
+        ]
+     tradelinks -> tradergroup [ 
+        label="FK707E9CD5A49E457E" 
+        ]
+  /* Node trader */
+  trader [ label = "{ trader| <traderid>traderid\l | <tradergroupid>tradergroupid\l | <username>username\l | <currencytobuyid>currencytobuyid\l | <currencytosellid>currencytosellid\l }" ]  
+  
+  /* edges/nodes for trader */
+     trader -> pycurrency [ 
+        label="FKCC663B8E689B0E5C" 
+        ]
+     trader -> tradergroup [ 
+        label="FKCC663B8EEF077A8F" 
+        ]
+     trader -> user_data [ 
+        label="FKCC663B8E1F76E338" 
+        ]
+     trader -> pycurrency [ 
+        label="FKCC663B8E738B3C78" 
+        ]
+  /* Node tradergroup */
+  tradergroup [ label = "{ tradergroup| <groupid>groupid\l | <currencytosellid>currencytosellid\l | <currencytobuyid>currencytobuyid\l }" ]  
+  
+  /* edges/nodes for tradergroup */
+     tradergroup -> pycurrency [ 
+        label="FKA977C3B1689B0E5C" 
+        ]
+     tradergroup -> pycurrency [ 
+        label="FKA977C3B1738B3C78" 
+        ]
+  /* Node user_data */
+  user_data [ label = "{ user_data| <username>username\l | <firstname>firstname\l | <lastname>lastname\l | <password>password\l }" ]  
+  
+  /* edges/nodes for user_data */
+  /* Node user_role */
+  user_role [ label = "{ user_role| <username>username\l | <role>role\l }" ]  
+  
+  /* edges/nodes for user_role */
+
+}
+

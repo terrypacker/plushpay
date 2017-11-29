@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration PUBLIC "-//LOG4J" "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+     <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+         <layout class="org.apache.log4j.PatternLayout">
+             <param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss,SSS} - %p - %C{1}.%M(%L) | %m%n"/>
+         </layout>
+     </appender>
+		<appender name="APPLOGFILE" class="org.apache.log4j.RollingFileAppender">
+    	<param name="File"   value="/Users/tpacker/Development/apache-tomcat-6.0.18/wtpwebapps/logs/payYourself.log" />
+    	<param name="Append" value="true" />
+    	<param name="MaxFileSize" value="1MB" />
+    	 <param name="MaxBackupIndex" value="10"/>
+    	<layout class="org.apache.log4j.PatternLayout">
+      		<param name="ConversionPattern" value="%d{DATE} %-5p %-15c{1}:%m%n"/>
+    	</layout>
+  	</appender>
+  	
+	<appender name="TRADERWEB" class="org.apache.log4j.RollingFileAppender">
+    	<param name="File"   value="/Users/tpacker/Development/apache-tomcat-6.0.18/wtpwebapps/PayYourself/" />
+    	<param name="Append" value="true" />
+    	<param name="MaxFileSize" value="1MB" />
+    	 <param name="MaxBackupIndex" value="10"/>
+    	<layout class="org.apache.log4j.PatternLayout">
+      		<param name="ConversionPattern" value="%d{DATE} %-5p %-15c{1}:%m%n"/>
+    	</layout>
+  	</appender>
+
+	<!-- Everything Hibernate Logging Levels -->
+     <logger name="org.hibernate">
+         <level value="ERROR"/>
+         <appender-ref ref="CONSOLE" />
+     </logger>
+     
+     <!-- SQL DML Statements -->
+     <logger name="org.hibernate.SQL">
+         <level value="ERROR"/>
+     </logger>
+     
+     <!-- JDBC Parameters -->
+     <logger name="org.hibernate.type">
+         <level value="FATAL"/>
+     </logger>
+     
+     <!-- SQL DDL Statements -->
+     <logger name="org.hibernate.tool.hbm2ddl">
+         <level value="FATAL"/>
+     </logger>
+    
+     <!-- Loge the state of all entities (max 20) associated with the session at flush time -->
+     <logger name="org.hibernate.pretty">
+         <level value="FATAL"/>
+     </logger>
+     
+     <!--Log all second leve cache activity -->
+     <logger name="org.hibernate.cache">
+         <level value="FATAL"/>
+     </logger>
+
+     <!-- Log transaction related activity -->
+     <logger name="org.hibernate.transaction">
+         <level value="FATAL"/>
+     </logger>
+ 
+     <!-- Log all JDBC resource acquisition -->
+     <logger name="org.hibernate.jdbc">
+         <level value="FATAL"/>
+     </logger>
+
+     <!--Log HQL and SQL AST's during query parsing -->
+     <logger name="org.hibernate.hql.ast.AST">
+         <level value="FATAL"/>
+     </logger>
+
+     <!-- Log all JAAS  authorization requests -->
+     <logger name="org.hibernate.secure">
+         <level value="FATAL"/>
+     </logger>
+
+     
+    
+
+	<!-- Setup PY Logging (Also done in loggerFactory -->
+
+     <logger name="com.payyourself">
+         <level value="FATAL"/>
+     </logger>
+     
+     <!-- Can hard code logger levels for packages/classes here -->
+     <logger name="com.payyourself.banking.au" additivity="false">
+     	<level value="DEBUG"/>
+     	<appender-ref ref="APPLOGFILE"></appender-ref>
+     	<appender-ref ref="CONSOLE" />
+     </logger>
+
+     <logger name="com.payyourself.trading" additivity="false">
+     	<level value="ERROR"/>
+     	<appender-ref ref="APPLOGFILE"></appender-ref>
+     	<appender-ref ref="CONSOLE" />
+     </logger>
+     
+     <logger name="com.payyourself.currency.rate" additivity="false">
+     	<level value="ERROR"/>
+     	<appender-ref ref="APPLOGFILE"></appender-ref>
+     	<appender-ref ref="CONSOLE" />
+     </logger>
+     
+     <logger name="com.payyourself.trading.trader.traderSimulation.TraderTestDataSimulation" additivity="false">
+     	<level value="ERROR"/>
+     	<appender-ref ref="APPLOGFILE"></appender-ref>
+     	<appender-ref ref="CONSOLE" />
+     </logger>
+ 
+     <logger name="com.payyourself.testing" additivity="false">
+     	<level value="INFO"/>
+     	<appender-ref ref="APPLOGFILE"></appender-ref>
+     	<appender-ref ref="CONSOLE" />
+     </logger>     
+     <root>
+         <priority value="ERROR"/>
+         <appender-ref ref="CONSOLE"/>
+     </root>
+
+ </log4j:configuration>
+

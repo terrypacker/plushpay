@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 18, 2009 3:19:35 AM by Hibernate Tools 3.2.5.Beta -->
+<hibernate-mapping default-cascade="all" default-lazy="false" package="com.payyourself.currency">
+ <class name="com.payyourself.currency.PyCurrency" proxy="PyCurrency" table="pycurrency">
+  <meta attribute="class-description">This is the base concept for trading.  Every currency is converted to a baseRate 			upon creation.  This base rate is used for all computation and comparison 			as this allows cross currency comparison and inter-currency comparison  			even when multiple exchange rates are used.</meta>
+  <meta attribute="implements">Comparable</meta>
+  <meta attribute="class-code">/**
+			* Copy Constructor
+			*
+			*/
+			public PyCurrency(PyCurrency original) {
+
+				this.value = original.getValue();
+				if(original.getType() != null)
+					this.type = new PyCurrencyType(original.getType());
+				this.currencyId = original.getCurrencyId();
+				
+			}
+
+			/**
+			 * Add 2 PyCurrencies of the same type.
+			 * @param addend
+			 * @return
+			 * @throws Exception
+			 */
+			public PyCurrency add(PyCurrency addend) throws Exception {
+				PyCurrency sum = new PyCurrency();
+		
+				if (!this.getType().getCode().equals(addend.getType().getCode())) {
+					throw new Exception(
+							"Unable to add currencies of different types! ("
+									+ this.getType().getCode() + " and "
+									+ addend.getType().getCode());
+				}
+				sum.setValue(addend.getValue() + this.getValue());
+				sum.setType(this.getType());
+		
+				return sum;
+			}
+			
+			/**
+			 * Subtract toSub from this PyCurrency
+			 * @param toSub
+			 * @return
+			 * @throws Exception
+			 */
+			public PyCurrency minus(PyCurrency toSub) throws Exception {
+				PyCurrency sum = new PyCurrency();
+		
+				if (!this.getType().getCode().equals(toSub.getType().getCode())) {
+					throw new Exception(
+							"Unable to subtract currencies of different types! ("
+									+ this.getType().getCode() + " and "
+									+ toSub.getType().getCode());
+				}
+				sum.setValue(this.getValue()-toSub.getValue());
+				sum.setType(this.getType());
+		
+				return sum;
+			}
+					
+				/**
+			 * Compare to method.
+			 * Return 0 if they are same
+			 * Return 1 if this is &gt;
+			 * Return -1 if this is &lt;
+			 */
+			public int compareTo(Object o) {
+				PyCurrency comp = (PyCurrency)o;
+				//TODO this comparison is wrong as differing types will return as same
+				if((comp.getValue()&gt;this.value)
+						&amp;&amp;(comp.getType().equals(this.type))){
+					return -1;
+				}else if((comp.getValue()&lt;this.value)
+						&amp;&amp;(comp.getType().equals(this.type))){
+					return 1;
+				}else{
+					//Must be the same
+					return 0;
+				}
+				
+			}</meta>
+  <id name="currencyId" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <column name="currencyid" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="value" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="value" sql-type="BIGINT"/>
+  </property>
+  <many-to-one cascade="all"
+   class="com.payyourself.currency.type.PyCurrencyType" name="type">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="currencycode" sql-type="VARCHAR(5)"/>
+  </many-to-one>
+ </class>
+</hibernate-mapping>

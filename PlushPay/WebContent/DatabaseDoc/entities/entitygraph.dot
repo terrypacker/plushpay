@@ -1,0 +1,129 @@
+digraph EntityGraph {
+  compound=true;
+    bgcolor="white"; 
+    fontcolor="black"; fontname="Helvetica"; fontsize="10.0"; 
+    ranksep="equally"; 
+    label="Entity Graph"; 
+    URL="http://tools.hibernate.org";
+  edge [
+        color="lightgrey", 
+        fontcolor="black", 
+        fontname="Helvetica", 
+        fontsize="8.0",         
+        labelangle=-25.0, 
+        labeldistance=1.5
+        ];
+  node [
+       fontcolor="black",
+       fontname="Helvetica", 
+       fontsize="10.0", 
+       shape=record, 
+       fillcolor="#D4E5FE", 
+       style="solid,filled"];
+
+  /* Node com.payyourself.userManagement.role.Role */
+  com_dot_payyourself_dot_userManagement_dot_role_dot_Role [ label = "{ com\.payyourself\.userManagement\.role\.Role| role\l }", URL="com/payyourself/userManagement/role/Role.html" ]
+  /* Subclass edges for com.payyourself.userManagement.role.Role */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_userManagement_dot_role_dot_Role */
+     
+  /* Node com.payyourself.registration.RegistrationInfo */
+  com_dot_payyourself_dot_registration_dot_RegistrationInfo [ label = "{ com\.payyourself\.registration\.RegistrationInfo| username\l firstname\l lastname\l password\l email\l }", URL="com/payyourself/registration/RegistrationInfo.html" ]
+  /* Subclass edges for com.payyourself.registration.RegistrationInfo */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_registration_dot_RegistrationInfo */
+     
+     
+     
+     
+     
+  /* Node com.payyourself.currency.type.PyCurrencyType */
+  com_dot_payyourself_dot_currency_dot_type_dot_PyCurrencyType [ label = "{ com\.payyourself\.currency\.type\.PyCurrencyType| rateToBase\l symbol\l }", URL="com/payyourself/currency/type/PyCurrencyType.html" ]
+  /* Subclass edges for com.payyourself.currency.type.PyCurrencyType */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_currency_dot_type_dot_PyCurrencyType */
+     
+     
+  /* Node com.payyourself.trading.chain.TradeLink */
+  com_dot_payyourself_dot_trading_dot_chain_dot_TradeLink [ label = "{ com\.payyourself\.trading\.chain\.TradeLink| buyerSellCurrencyMismatch\l buyers\l sellers\l buyerBuyCurrencyMismatch\l }", URL="com/payyourself/trading/chain/TradeLink.html" ]
+  /* Subclass edges for com.payyourself.trading.chain.TradeLink */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_trading_dot_chain_dot_TradeLink */
+     
+     com_dot_payyourself_dot_trading_dot_chain_dot_TradeLink -> com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup [ 
+        label="buyers" 
+        ]
+     
+     com_dot_payyourself_dot_trading_dot_chain_dot_TradeLink -> com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup [ 
+        label="sellers" 
+        ]
+     
+     
+  /* Node com.payyourself.trading.chain.TradeChain */
+  com_dot_payyourself_dot_trading_dot_chain_dot_TradeChain [ label = "{ com\.payyourself\.trading\.chain\.TradeChain| }", URL="com/payyourself/trading/chain/TradeChain.html" ]
+  /* Subclass edges for com.payyourself.trading.chain.TradeChain */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_trading_dot_chain_dot_TradeChain */
+     
+  /* Node com.payyourself.trading.trade.Trade */
+  com_dot_payyourself_dot_trading_dot_trade_dot_Trade [ label = "{ com\.payyourself\.trading\.trade\.Trade| }", URL="com/payyourself/trading/trade/Trade.html" ]
+  /* Subclass edges for com.payyourself.trading.trade.Trade */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_trading_dot_trade_dot_Trade */
+  /* Node com.payyourself.trading.trader.Trader */
+  com_dot_payyourself_dot_trading_dot_trader_dot_Trader [ label = "{ com\.payyourself\.trading\.trader\.Trader| group\l user\l currencyToBuy\l currencyToSell\l }", URL="com/payyourself/trading/trader/Trader.html" ]
+  /* Subclass edges for com.payyourself.trading.trader.Trader */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_trading_dot_trader_dot_Trader */
+     com_dot_payyourself_dot_trading_dot_trader_dot_Trader -> com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup [ 
+        label="group" 
+        ]
+     
+     com_dot_payyourself_dot_trading_dot_trader_dot_Trader -> com_dot_payyourself_dot_userManagement_dot_user_dot_User [ 
+        label="user" 
+        ]
+     
+     com_dot_payyourself_dot_trading_dot_trader_dot_Trader -> com_dot_payyourself_dot_currency_dot_PyCurrency [ 
+        label="currencyToBuy" 
+        ]
+     
+     com_dot_payyourself_dot_trading_dot_trader_dot_Trader -> com_dot_payyourself_dot_currency_dot_PyCurrency [ 
+        label="currencyToSell" 
+        ]
+     
+  /* Node com.payyourself.trading.trader.group.TraderGroup */
+  com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup [ label = "{ com\.payyourself\.trading\.trader\.group\.TraderGroup| currencyToSell\l currencyToBuy\l }", URL="com/payyourself/trading/trader/group/TraderGroup.html" ]
+  /* Subclass edges for com.payyourself.trading.trader.group.TraderGroup */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup */
+     
+     com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup -> com_dot_payyourself_dot_currency_dot_PyCurrency [ 
+        label="currencyToSell" 
+        ]
+     
+     com_dot_payyourself_dot_trading_dot_trader_dot_group_dot_TraderGroup -> com_dot_payyourself_dot_currency_dot_PyCurrency [ 
+        label="currencyToBuy" 
+        ]
+     
+  /* Node com.payyourself.currency.PyCurrency */
+  com_dot_payyourself_dot_currency_dot_PyCurrency [ label = "{ com\.payyourself\.currency\.PyCurrency| value\l baseValue\l type\l }", URL="com/payyourself/currency/PyCurrency.html" ]
+  /* Subclass edges for com.payyourself.currency.PyCurrency */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_currency_dot_PyCurrency */
+     
+     
+     com_dot_payyourself_dot_currency_dot_PyCurrency -> com_dot_payyourself_dot_currency_dot_type_dot_PyCurrencyType [ 
+        label="type" 
+        ]
+     
+  /* Node com.payyourself.userManagement.user.User */
+  com_dot_payyourself_dot_userManagement_dot_user_dot_User [ label = "{ com\.payyourself\.userManagement\.user\.User| firstname\l lastname\l password\l }", URL="com/payyourself/userManagement/user/User.html" ]
+  /* Subclass edges for com.payyourself.userManagement.user.User */
+  
+  /* Property edges/nodes for com_dot_payyourself_dot_userManagement_dot_user_dot_User */
+     
+     
+     
+
+}
+

@@ -1,0 +1,70 @@
+Body{
+		font-family: Tahoma;
+		color: #1a73bf;
+	}
+	
+	A:link{
+		text-decoration: none;
+		color: #1a73bf;
+		
+	}
+	A:visited {
+		text-decoration: none;
+		color: #1a73bf;
+	}
+	
+	A:active {
+		text-decoration: none;
+		color: #1a73bf;
+	}	
+	
+	A:hover {
+		text-decoration: underline;
+		color: #1a73bf;
+	}
+
+div#headerGraphic
+	{	
+		margin: 0px 0 0 0;
+		border-style: solid;
+		border-color: #1a73bf;
+		border-width: 2px 2px 0 2px;
+		white-space: nowrap;
+		max-width: 100%;
+		clear: right;
+		background: url(/PayYourself/graphics/payYourselfFill.gif);
+		background-repeat: repeat-x;
+	}
+	
+.menuBar{
+		background-color: #bf8b1a;
+		border-style: solid;
+		border-color: 1a73bf;
+		border-width: 2px 0 2px 2px;
+		min-height: 30px;
+		height: 30px;
+		font-size: 10pt;
+		color: black;
+}
+
+.loginInfo{
+	background-color: #bf8b1a;
+	border-style: solid;
+	border-color: 1a73bf;
+	min-height: 30px;
+	height: 30px;
+	font-size: 8pt;
+	color: black;
+}
+
+.alignRight{
+	text-align: right;
+}
+
+.alignLeft{
+	text-align: left;
+}
+
+.alignCenter{
+	text-align: center;
+}

@@ -1,0 +1,56 @@
+h1{ 
+	background-color: #bf8b1a; 
+	color: #FFFFFF; 
+	margin: 0; 
+	padding: 3px 3px 3px 10px;
+	font-size: 13px; 
+}
+
+
+
+h2{ 
+	border-bottom: 1px solid #d0d0d0; 
+	border-top: 1px solid #d0d0d0; 
+	border-left:1px solid #d0d0d0; 
+	border-right:1px solid #d0d0d0; 
+	background-color: #bf8b1a; 
+	color: #000000; 
+	margin: 0 0 0 0; 
+	padding: 3px; 
+	font-size: 12px; 
+}
+	
+
+
+h3 {
+	background-color: #bf8b1a; 
+	color: #000000; 
+	margin: 0 0 5px 0; 
+	padding: 3px; 
+	font-size: 11px; 
+}
+
+h1 a, h1 a:link, h1 a:visited,
+h2 a, h2 a:link, h2 a:visited,
+h3 a, h3 a:link, h3 a:visited
+	{ color: black; }
+hr
+	{ color: #bf8b1a; height : 1px; }
+
+.inputForm{
+		background-color: #bf8b1a;
+		border-style: solid;
+		border-color: #1a73bf;
+		border-width: 2px 2px 2px 2px;
+}
+
+.outputForm{
+
+		background-color: #bf8b1a;
+		border-style: solid;
+		border-color: #1a73bf;
+		border-width: 2px 2px 2px 2px;
+	}
+
+.dataTable{
+	background-color: #FFFFFF;

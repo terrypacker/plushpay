@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 18, 2009 4:59:52 AM by Hibernate Tools 3.2.5.Beta -->
+<hibernate-mapping package="com.payyourself.currency.type">
+ <class name="com.payyourself.accounting.account.levelTwo.LevelTwo" table="level_two">
+  <id name="id" type="int">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="id" not-null="true" sql-type="INTEGER" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="description" type="string">
+   <meta attribute="use-in-equals">true</meta>
+   <meta attribute="use-in-tostring">true</meta>
+   <column name="symbol" sql-type="VARCHAR(20)"/>
+  </property>
+  <property generated="never" lazy="false" name="code" type="string">
+   <column name="code" sql-type="VARCHAR(4)"/>
+  </property>
+ </class>
+</hibernate-mapping>

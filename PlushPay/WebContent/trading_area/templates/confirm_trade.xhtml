@@ -1,0 +1,77 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+
+	<rich:modalPanel id="confirmTrade" autosized="true">
+	<f:facet name="header">
+            <h:panelGroup>
+                <h:outputText styleClass="FormHeader" value="Confirm Trade"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+ 
+	<h:form id="confirmTradeForm" >
+		<h:panelGrid columns="2" width="200px">
+			<f:facet name="header">
+				<h:outputText value="Trade Summary"></h:outputText>
+			</f:facet>		
+			<h:outputText value="Buying:"/>
+			<h:outputText value="#{createTrade.newTrader.currencyToBuy}"
+				converter="currencyConverter"/>
+							
+			<h:outputText value="Selling: "/>
+			<h:outputText value="#{createTrade.newTrader.currencyToSell}" 
+				converter="currencyConverter"/>
+			
+			<h:outputText value="Rate (Buy/Sell): " />
+			<h:outputText value="#{createTrade.desiredRate}" 
+				converter="currencyRateConverter" />
+			
+			<h:outputText value="Beneficiaries " />
+			<rich:dataTable
+				id="beneficiaryTable" 
+				value="#{createTrade.selectedBeneficiaries}"
+				var="bene"
+			>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Name"/>
+					</f:facet>
+					<h:outputText value="#{bene.beneficiary.name}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Amount"/>
+					</f:facet>
+					<h:outputText value="#{bene.amount}" 
+						converter="currencyValueConverter"/>
+				</rich:column>				
+			</rich:dataTable>
+			
+			
+			<f:facet name="footer">
+				<h:panelGroup>
+					<a4j:commandButton actionListener="#{createTrade.confirm}" 
+						value="Confirm" style="text-align: center "
+						onclick="Richfaces.hideModalPanel('confirmTrade'); Richfaces.showModalPanel('tradeConfirmed');" />
+	
+					<a4j:commandButton actionListener="#{createTrade.cancel}" 
+						value="Cancel" style="text-align: center "
+						reRender="createTradeForm"
+					onclick="Richfaces.hideModalPanel('confirmTrade');" />
+				</h:panelGroup>						
+			</f:facet>
+			
+		</h:panelGrid>			
+	</h:form>
+
+	</rich:modalPanel>
+
+		
+</ui:composition>

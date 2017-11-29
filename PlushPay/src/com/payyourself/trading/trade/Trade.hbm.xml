@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" default-lazy="false" package="com.payyourself.trading.trade">
+ <class name="com.payyourself.trading.trade.Trade" table="trade">
+  <meta attribute="class-code">/**
+	 * Return the mismatch between Buyer.buy and Seller.sell
+	 * 
+	 * We will remove this value from the Buyer.buy currency type buffer
+	 * 
+	 * @return
+	 */
+	public long getBuyerBuyMismatch(){
+		return (this.buyerGroup.getCurrencyToBuy().getValue()-this.sellerGroup.getCurrencyToSell().getValue());
+		
+	}
+	
+	/**
+	 * Return the mismatch between Buyer.sell and Seller.buy
+	 * 
+	 * This is used with SellerBuy Mismatch to compute the 
+	 * value lost in trade from the Buyer.buy currency type buffer 
+	 * due to exchange rate variances.
+	 * @return
+	 */
+	public long getBuyerSellMismatch(){
+		return (this.buyerGroup.getCurrencyToSell().getValue() - this.sellerGroup.getCurrencyToBuy().getValue());
+	}
+	
+	/**
+	 * Return the mismatch between Seller.buy and Buyer.sell
+	 * 
+	 * We will remove this value from the Seller.buy currency type buffer
+	 * 
+	 * @return
+	 */
+	public long getSellerBuyMismatch(){
+		return (this.sellerGroup.getCurrencyToBuy().getValue() - this.buyerGroup.getCurrencyToSell().getValue());
+	}
+
+	
+	/**
+	 * Return the mismatch between Seller.sell and Buyer.buy
+	 * 
+	 * This is used with BuyerBuy Mismatch to compute the 
+	 * value lost in trade from the Seller.sell currency type buffer 
+	 * due to exchange rate variances.
+	 * @return
+	 */
+	public long getSellerSellMismatch(){
+		return (this.sellerGroup.getCurrencyToSell().getValue() - this.buyerGroup.getCurrencyToBuy().getValue());
+	}</meta>
+  <id name="tradeId" type="long">
+   <column name="tradeid" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <many-to-one cascade="all"
+   class="com.payyourself.trading.trader.group.TraderGroup" lazy="false" name="buyerGroup">
+   <column name="buyergroup" sql-type="BIGINT"/>
+  </many-to-one>
+  <many-to-one cascade="all"
+   class="com.payyourself.trading.trader.group.TraderGroup" lazy="false" name="sellerGroup">
+   <column name="sellergroup" sql-type="BIGINT"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="dateCreated" type="calendar">
+   <column name="datecreated" sql-type="DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="status" type="string">
+   <column name="status" sql-type="VARCHAR(20)"/>
+  </property>
+ </class>
+</hibernate-mapping>

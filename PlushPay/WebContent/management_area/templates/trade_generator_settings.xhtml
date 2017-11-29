@@ -1,0 +1,63 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/css/payyourself.css" rel="stylesheet" type="text/css"/>
+
+	<br></br>
+
+	Generator Settings
+		<br></br>
+		<h:outputFormat style="color: blue" rendered="#{tradeGeneratorControl.updateConfirmed}"  value="#{msg.success_update_settings}" >
+       	</h:outputFormat>
+       	<br></br>
+	<h:form id="updateSettings">
+		<h:panelGrid columns="3">
+			
+			<h:outputText value="#{msg.running}: "></h:outputText>
+			<rich:comboBox value="#{tradeGeneratorControl.settings.run}" suggestionValues="#{tradeGeneratorControl.runStates}">
+			</rich:comboBox>
+			<h:outputText value=""></h:outputText>			
+			
+			<h:outputText value="#{msg.interval_ms}: "></h:outputText>			
+			<rich:inputNumberSpinner minValue="1000" 
+				maxValue="300000" 
+				step="10" 
+				enableManualInput="true"
+				value="#{tradeGeneratorControl.settings.computeTradeInterval}">
+			</rich:inputNumberSpinner>
+			<h:outputText value=""></h:outputText>
+
+			<h:outputText value="#{msg.step_size}: "></h:outputText>			
+			<rich:inputNumberSpinner minValue="0.000000001" 
+				maxValue="1" 
+				step=".001" 
+				enableManualInput="true"
+				value="#{tradeGeneratorControl.settings.stepSize}">
+			</rich:inputNumberSpinner>
+			<h:outputText value=""></h:outputText>
+			
+			<h:outputText value="#{msg.min_group_decimation_size}: "></h:outputText>			
+			<rich:inputNumberSpinner minValue="1" 
+				maxValue="1000" 
+				step="10" 
+				enableManualInput="true"
+				value="#{tradeGeneratorControl.settings.maxGroupSizeBeforeDecimation}">
+			</rich:inputNumberSpinner>
+			<h:outputText value=""></h:outputText>
+			
+			<h:outputText value=""></h:outputText>
+			<h:commandLink action="#{tradeGeneratorControl.updateSettings}">			
+ 				<h:outputText value="[#{msg.update}]" id="submitButton"/>
+ 			</h:commandLink>
+ 			<h:outputText value=""></h:outputText>
+ 			
+ 		</h:panelGrid>
+		
+	</h:form>
+
+</ui:composition>

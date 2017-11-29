@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.trading.chain">
+ <class name="com.payyourself.trading.chain.TradeLink" table="tradelinks">
+  <id column="linkid" name="linkid" type="int"/>
+  <property generated="never" lazy="false"
+   name="buyerSellCurrencyMismatch" type="float">
+   <column name="buyersellcurrencymismatch" sql-type="FLOAT"/>
+  </property>
+  <many-to-one class="com.payyourself.trading.trader.group.TraderGroup" name="buyers">
+   <column name="buyergroupid" sql-type="INTEGER"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.trading.trader.group.TraderGroup" name="sellers">
+   <column name="sellergroupid" sql-type="INTEGER"/>
+  </many-to-one>
+  <property name="buyerBuyCurrencyMismatch" type="float">
+   <column name="buyerbuycurrencymismatch" sql-type="FLOAT"/>
+  </property>
+ </class>
+</hibernate-mapping>

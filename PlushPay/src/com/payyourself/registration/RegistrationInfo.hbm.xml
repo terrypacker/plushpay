@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.registration">
+ <class name="com.payyourself.registration.RegistrationInfo" table="registrationinfo">
+  <id column="registrationid" name="registrationid" type="int">
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="username" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="20" name="username" not-null="true"
+    sql-type="VARCHAR(20)" unique="true"/>
+  </property>
+  <property generated="never" lazy="false" name="firstname" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="50" name="firstname" not-null="true" sql-type="VARCHAR(50)"/>
+  </property>
+  <property generated="never" lazy="false" name="lastname" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="50" name="lastname" not-null="true" sql-type="VARCHAR(50)"/>
+  </property>
+  <property generated="never" lazy="false" name="password" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column default="'password'" length="20" name="password"
+    not-null="true" sql-type="VARCHAR(20)"/>
+  </property>
+  <property name="email" type="string">
+   <column name="email" not-null="true" sql-type="VARCHAR(50)"/>
+  </property>
+ </class>
+</hibernate-mapping>

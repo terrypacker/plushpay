@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/user_area/css/body.css" rel="stylesheet" type="text/css"/>
+
+<br></br>
+	<h:form id="beneficiary_list">
+	
+		<rich:dataTable value="#{beneficiaries.user.beneficiaries}" var="beneficiary" >
+			<f:facet name="header">
+				<h:outputText value="Beneficiaries" />
+			</f:facet>
+			<rich:column sortBy="#{beneficiary.name}" width="200px">
+				<f:facet name="header">
+					<h:outputText value="Name" />
+				</f:facet>
+				<h:outputText value="#{beneficiary.name}"/>
+			</rich:column>
+
+			<rich:column width="120px">
+				<f:facet name="header">
+					<h:outputText value="Account Number" />
+				</f:facet>
+				<h:outputText value="#{beneficiary.details.accountNumber}"/>
+			</rich:column>
+			
+			<rich:column width="120px">
+					
+					<a4j:commandButton oncomplete="Richfaces.showModalPanel('updateUsdBeneficiary');" value="Edit" 
+						rendered="#{beneficiary.type == 'USD'}"
+						actionListener="#{beneficiaries.beneficiaryEdit}" reRender="updateUsdBeneficiaryForm">
+						<f:attribute name="beneToEdit" value="#{beneficiary}" />
+					</a4j:commandButton>
+					
+					<a4j:commandButton oncomplete="Richfaces.showModalPanel('updateAudBeneficiary');" value="Edit" 
+						rendered="#{beneficiary.type == 'AUD'}"
+						actionListener="#{beneficiaries.beneficiaryEdit}" reRender="updateAudBeneficiaryForm">
+						<f:attribute name="beneToEdit" value="#{beneficiary}" />
+					</a4j:commandButton>
+					
+			</rich:column>
+			
+		</rich:dataTable>
+
+		<a4j:commandButton onclick="Richfaces.showModalPanel('newUsdBeneficiary');" value="Add USD Beneficiary" />
+		<a4j:commandButton onclick="Richfaces.showModalPanel('newAudBeneficiary');" value="Add AUD Beneficiary" />
+		
+
+	</h:form>	
+
+</ui:composition>

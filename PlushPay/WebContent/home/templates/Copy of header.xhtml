@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<f:loadBundle var="msg" basename="com.payyourself.locale.Locale"/> 
+	<link href="/PayYourself/home/css/header.css" rel="stylesheet" type="text/css"/>
+	<div id="headerGraphic">
+		<img src="#{msg.headerGraphicLocation}" ></img>		
+	</div>
+
+	<h:form>
+		<h:panelGrid columns="1" style="width: 10%;border-width: 2pt 2pt 2pt 2pt;" styleClass="menuBar" columnClasses="alignCenter">
+			<a4j:commandLink action="register" value = "#{msg.register}"></a4j:commandLink>
+		</h:panelGrid>
+
+		<h:panelGrid columns="2" style="width: 90%; border-width: 2pt 2pt 2pt 2pt;" styleClass="loginInfo" columnClasses="alignCenter,alignRight">
+			<h:outputText styleClass="loginStatus" value="#{msg.welcome}"/>
+			<h:panelGroup>
+				| <h:outputLink styleClass="loginStatus" value="/PayYourself/app/login_area/login_redirect.jsp"  style="color: black; font-size: 8pt;">
+				<h:outputText value="#{msg.login}"/>
+				</h:outputLink>|
+			</h:panelGroup>		
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

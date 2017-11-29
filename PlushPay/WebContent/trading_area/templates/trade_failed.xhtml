@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+	<br></br>
+
+	<h2>
+		<h:outputText style="color: red;" rendered="#{createTrade.created}" value="Sorry, something went wrong.  Trade Failed. Please Retry."/>
+	</h2>
+		<h:outputText rendered="#{!createTrade.created}" value="Invalid Access to Trade Status Page"/>
+	<hr></hr>
+
+
+
+</ui:composition>

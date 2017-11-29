@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context>
+	<Realm
+		className="org.apache.catalina.realm.JDBCRealm" 
+		driverName="com.mysql.jdbc.Driver"
+		connectionURL="jdbc:mysql://localhost/payYourself?"
+        connectionName="payYourselfUsers"
+        connectionPassword="password"
+        userTable="user_data" 
+		userNameCol="username" 
+        userCredCol="password"
+		userRoleTable="user_role" 
+		roleNameCol="role" 
+	/>
+
+<!--  HIbernate Session Factory Resource 
+<Resource name="SessionFactory"
+             auth="Container"
+             type="org.hibernate.SessionFactory"
+             factory="com.payyourself.persistence.HibernateTomcatFactory"
+             configuration="hibernate.cfg.xml"/>
+	
+-->
+
+
+<!-- MySQL Datasource -->
+<Resource name="PayYourselfDatasource" auth="Container"
+   type="javax.sql.DataSource" 
+   removeAbandoned="true"
+   logAbandoned="true"
+   removeAbandonedTimeout="30" 
+   maxActive="50"
+   maxIdle="30" 
+   maxWait="10000" 
+   username="payYourselfUsers"
+   password="password"
+   driverClassName="com.mysql.jdbc.Driver"
+   url="jdbc:mysql://localhost/payYourself"/>
+
+<!--  Some performance tuning params for the db resource pooling -->
+<Connector port="80" maxHttpHeaderSize="8192" maxProcessors="150"
+   maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+   enableLookups="false" redirectPort="8443" acceptCount="150"
+   connectionTimeout="20000" disableUploadTimeout="true" />
+</Context>

@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" default-lazy="false" package="com.payyourself.trading.trader">
+ <class name="com.payyourself.trading.trader.Trader" table="trader">
+  <meta attribute="implements">Comparable</meta>
+  <meta attribute="class-code">/** * Setup to order traders by the currency they * want to Buy. */
+	public int compareTo(Object o) {
+		Trader comp = (Trader) o;
+		return this.currencyToBuy.compareTo(comp.getCurrencyToBuy());
+	}
+
+	/** * Add a beneficiary to the list. * @param bene */
+	public void addBeneficiary(TradeBeneficiary bene) {
+		this.beneficiaries.add(bene);
+	}</meta>
+  <id name="traderid" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="traderid" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <many-to-one cascade="all"
+   class="com.payyourself.trading.trader.group.TraderGroup" name="group" unique="true">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="tradergroupid" sql-type="INTEGER"/>
+  </many-to-one>
+  <many-to-one cascade="all"
+   class="com.payyourself.userManagement.user.User" name="user">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="username" sql-type="VARCHAR(20)"/>
+  </many-to-one>
+  <many-to-one cascade="all" class="com.payyourself.currency.PyCurrency" name="currencyToBuy">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="currencytobuyid" sql-type="BIGINT"/>
+  </many-to-one>
+  <many-to-one cascade="all" class="com.payyourself.currency.PyCurrency" name="currencyToSell">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="currencytosellid" sql-type="BIGINT"/>
+  </many-to-one>
+  <property generated="never" lazy="false" name="status" type="string">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="status" sql-type="VARCHAR(20)"/>
+  </property>
+  <list cascade="all" lazy="false" name="beneficiaries" table="trader_beneficiaries">
+   <meta attribute="use-in-equals">true</meta>
+   <key column="traderid"/>
+   <index/>
+   <many-to-many
+    class="com.payyourself.trading.beneficiary.tradeBeneficiary.TradeBeneficiary"
+    column="id" unique="false"/>
+  </list>
+ </class>
+</hibernate-mapping>

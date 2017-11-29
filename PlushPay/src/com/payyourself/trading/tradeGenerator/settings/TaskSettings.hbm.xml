@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.trading.tradeGenerator.settings">
+ <class
+  name="com.payyourself.trading.tradeGenerator.settings.TaskSettings" table="tasksettings">
+  <id name="taskId" type="long">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="taskid" not-null="true" sql-type="INTEGER" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="allowableMismatch" type="float">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="allowablemismatch" sql-type="FLOAT"/>
+  </property>
+  <property generated="never" lazy="false" name="computeTradeInterval" type="long">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="computetradeinterval" sql-type="INTEGER"/>
+  </property>
+  <property generated="never" lazy="false" name="stepSize" type="float">
+    <meta attribute="use-in-equals">true</meta>
+   <column name="stepsize" sql-type="FLOAT"/>
+  </property>
+  <property generated="never" lazy="false"
+   name="maxGroupSizeBeforeDecimation" type="int">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="maxgroupsizebeforedecimation" sql-type="INTEGER"/>
+  </property>
+  <property generated="never" lazy="false" name="status" type="string">
+   <meta attribute="use-in-equals">true</meta>
+   <column name="status" sql-type="VARCHAR(20)"/>
+  </property>
+  <property generated="never" lazy="false" name="run" type="boolean">
+   <meta attribute="use-in-equals">true</meta>  
+   <column name="run" sql-type="BIT"/>
+  </property>
+ </class>
+</hibernate-mapping>

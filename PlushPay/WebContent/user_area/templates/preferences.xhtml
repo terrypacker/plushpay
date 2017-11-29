@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/user_area/css/body.css" rel="stylesheet" type="text/css"/>
+
+	<br></br>
+		<h:outputFormat style="color: blue" rendered="#{userPreferences.updateConfirmed}"  value="#{msg.success_update_details}" >
+       	</h:outputFormat>
+	<h:form id="updateDetails">
+		<h:panelGrid columns="3">
+			
+			<h:outputText value="#{msg.firstname}: " />
+			<h:inputText  id="firstName"
+				value="#{userPreferences.user.firstname}" 
+				maxlength="20" />
+			<h:message for="firstName"  styleClass="errorMsg"/>
+			
+			<h:outputText value="#{msg.lastname}:"  />
+			<h:inputText id="lastName"
+				value="#{userPreferences.user.lastname}" 
+			 	maxlength="30" />
+			<h:message for="lastName" styleClass="errorMsg"/>
+			
+			<h:outputText value="#{msg.email}: " />
+			<h:inputText id="email"
+				value="#{userPreferences.user.email}" maxlength="30" >
+				<f:validator validatorId="emailValidator" />
+			</h:inputText>
+			<h:message for="email" styleClass="errorMsg"/>
+			
+			<h:outputText value="#{msg.password}: " />
+			<h:inputSecret id="password" value="#{userPreferences.user.password}"
+				required="true" label="Password" size="15" maxlength="20" redisplay="true" requiredMessage="Please enter a password.">
+			</h:inputSecret>
+			<h:message for="password" styleClass="errorMsg"/>
+			
+			<h:outputText value="#{msg.confirm_password}: " />
+			<h:inputSecret id="confirm" value="#{userPreferences.user.password}"
+				label="Confirm password" size="15" maxlength="20" redisplay="true">
+				<f:attribute name="passwordId" value="updateDetails:password" />
+				<f:validator validatorId="passwordValidator" />
+			</h:inputSecret>
+			<h:message for="confirm" styleClass="errorMsg" />
+			
+			<h:outputText value=""></h:outputText>
+			<h:commandLink action="#{userPreferences.updatePreferences}">			
+ 				<h:outputText value="[#{msg.update}]" id="submitButton"/>
+ 			</h:commandLink>
+ 			<h:outputText value=""></h:outputText>
+ 			
+ 		</h:panelGrid>
+		
+	</h:form>
+	
+
+</ui:composition>

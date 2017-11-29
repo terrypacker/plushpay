@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/PayYourself/user_area/css/header.css" rel="stylesheet" type="text/css"/>
+		<div id="headerGraphic">
+			<img src="/PayYourself/graphics/payYourself.gif" ></img>		
+		</div>
+<f:loadBundle var="msg" basename="com.payyourself.locale.Locale"/>
+		<h:form >
+			<h:panelGrid columns="1" style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="#{createTrade.newTrade}" value="#{msg.new_trade}"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1" style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="history" value = "#{msg.history}"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1"  style="width: 10%; border-width: 2pt 2pt 2pt 2pt;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="user_home" value = "#{msg.user_home}"></a4j:commandLink>
+			</h:panelGrid>	
+			<h:panelGrid columns="1"  style="width: 10%; border-width: 2pt 2pt 2pt 0pt;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="beneficiaries" value = "Beneficiaries"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1" style="width: 10%; border-width: 2pt 2pt 2pt 0pt;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="preferences" value = "#{msg.preferences}"></a4j:commandLink>
+			</h:panelGrid>
+			
+
+		<h:panelGrid columns="2" style="width: 90%; border-width: 2pt 2pt 2pt 2pt;" styleClass="loginInfo" columnClasses="alignCenter,alignRight">
+			<h:outputText styleClass="loginStatus" value="#{msg.welcome}"/>
+			<h:panelGroup>
+				| <h:outputLink styleClass="loginStatus" value="/PayYourself/app/login_area/login_redirect.jsp"  style="color: black; font-size: 8pt;">
+				<h:outputText value="#{msg.login}"/>
+				</h:outputLink>|
+			</h:panelGroup>		
+		</h:panelGrid>
+		</h:form>
+
+</ui:composition>

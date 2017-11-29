@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 18, 2009 4:59:52 AM by Hibernate Tools 3.2.5.Beta -->
+<hibernate-mapping default-lazy="false" package="com.payyourself.currency.type">
+ <class name="com.payyourself.currency.type.PyCurrencyType" table="currencytypes">
+  <meta attribute="class-code">/**
+	 * Copy Constructor
+	 *
+	 */
+	public PyCurrencyType(PyCurrencyType original) {
+		this.id = original.getId();
+		this.code = original.getCode();
+		this.rateToBase = original.getRateToBase();
+		this.symbol = original.getSymbol();
+		this.base = original.isBase();
+		this.date = Calendar.getInstance();
+		this.date.setTime(original.getDate().getTime());
+	}</meta>
+  <id name="id" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="id" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <property generated="never" lazy="false" name="code" type="com.payyourself.currency.code.CurrencyCode">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="code" not-null="true" sql-type="VARCHAR(3)"/>
+  </property>
+  <property generated="never" lazy="false" name="rateToBase"
+   not-null="true" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="ratetobase" not-null="true" sql-type="BIGINT"/>
+  </property>
+  <property generated="never" lazy="false" name="symbol" not-null="true" type="string">
+   <meta attribute="use-in-equals">true</meta>
+   <meta attribute="use-in-tostring">true</meta>
+   <column name="symbol" not-null="true" sql-type="VARCHAR(2)"/>
+  </property>
+  <property generated="never" lazy="false" name="date" not-null="true" type="calendar">
+   <meta attribute="use-in-equals">true</meta>
+   <meta attribute="use-in-tostring">true</meta>
+   <column name="date" not-null="true" sql-type="DATE"/>
+  </property>
+  <property generated="never" lazy="false" name="base" type="boolean">
+   <meta attribute="use-in-equals">true</meta>
+   <meta attribute="use-in-tostring">true</meta>
+   <column default="false" name="base" not-null="false" sql-type="BIT"/>
+  </property>
+ </class>
+</hibernate-mapping>

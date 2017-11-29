@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="userManagement.user">
+ <class name="com.payyourself.userManagement.user.User" table="user_data">
+  <meta attribute="class-code">/**
+	 		 * Copy Constructor
+			 * @param user
+			 */
+			public User(User user) {
+			this.username = new String(user.getUsername());
+			this.firstname = new String(user.getFirstname());
+			this.lastname = new String(user.getLastname());
+			this.password = new String(user.getPassword());
+			this.setEmail(user.getEmail());
+			this.setCanTrade(user.isCanTrade());
+			}</meta>
+  <id name="username" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="20" name="username" not-null="true"
+    sql-type="VARCHAR(20)" unique="true"/>
+   <generator class="assigned"/>
+  </id>
+  <property generated="never" lazy="false" name="firstname" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="20" name="firstname" not-null="true" sql-type="VARCHAR(20)"/>
+  </property>
+  <property generated="never" lazy="false" name="lastname" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="30" name="lastname" not-null="true" sql-type="VARCHAR(30)"/>
+  </property>
+  <property generated="never" lazy="false" name="password" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column default="'password'" length="20" name="password"
+    not-null="true" sql-type="VARCHAR(20)"/>
+  </property>
+  <property generated="never" lazy="false" name="email" type="string">
+   <meta attribute="use-in-tostring">true</meta>
+   <column length="30" name="email" not-null="true" sql-type="VARCHAR(30)"/>
+  </property>
+  <property generated="never" lazy="false" name="canTrade" type="boolean">
+   <meta attribute="use-in-tostring">true</meta>
+   <column name="cantrade" sql-type="BIT"/>
+  </property>
+  <list cascade="all" name="beneficiaries" table="user_beneficiaries">
+   <key column="username"/>
+   <list-index base="0" column="beneficiary_pos"/>
+   <many-to-many class="com.payyourself.trading.beneficiary.Beneficiary"
+    column="beneficiary_id" unique="false"/>
+  </list>
+ </class>
+</hibernate-mapping>

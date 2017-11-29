@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.trading.chain">
+ <class name="com.payyourself.trading.chain.TradeChain" table="chains">
+  <id column="chainid" name="chainid" type="int"/>
+  <list name="links" table="chain_links">
+   <key column="linkid"/>
+   <index/>
+   <element type="com.payyourself.trading.chain.TradeLink"/>
+  </list>
+ </class>
+</hibernate-mapping>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" package="com.payyourself.trading.beneficiary.tradeBeneficiary">
+ <class
+  name="com.payyourself.trading.beneficiary.tradeBeneficiary.TradeBeneficiary" table="trade_beneficiary">
+  <id name="id" type="long">
+   <column name="id" not-null="true" sql-type="BIGINT"/>
+   <generator class="increment"/>
+  </id>
+  <many-to-one class="com.payyourself.currency.PyCurrency" name="amount">
+   <column name="currencyid" sql-type="BIGINT"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.trading.beneficiary.Beneficiary" name="beneficiary">
+   <column name="beneificary_id" sql-type="BIGINT"/>
+  </many-to-one>
+ </class>
+</hibernate-mapping>

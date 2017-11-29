@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.userManagement.role">
+ <class name="com.payyourself.userManagement.role.Role" table="user_role">
+  <id name="username" type="string">
+   <column length="20" name="username" not-null="true"
+    sql-type="VARCHAR(20)" unique="true"/>
+   <generator class="assigned"/>
+  </id>
+  <property name="role" type="string">
+   <column length="20" name="role" not-null="true" sql-type="VARCHAR(20)"/>
+  </property>
+ </class>
+</hibernate-mapping>

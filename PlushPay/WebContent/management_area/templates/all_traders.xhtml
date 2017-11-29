@@ -1,0 +1,81 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/css/payyourself.css" rel="stylesheet" type="text/css"/>
+
+<br></br>
+
+	<h:form>
+
+		<h:outputText value="All Traders" ></h:outputText>
+		<rich:dataTable
+			id="buyersTable" 
+			var="trader" 
+			styleClass="dataTable" 
+			value="#{tradeGeneratorTraders.allTraders}" sortMode="mutiple">
+
+			<f:facet name="header">
+				<h:outputText value="Total Traders: #{tradeGeneratorTraders.numAllTraders}"/>
+			</f:facet>
+			<rich:column sortBy="#{trader.traderid}" width="50px">
+				<f:facet name="header">
+					<h:outputText value="Trader ID" />
+				</f:facet>
+				<h:outputText value="#{trader.traderid}"/>
+			</rich:column>
+			
+			<rich:column sortBy="#{trader.username}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Username" />
+				</f:facet>
+				<h:outputText value="#{trader.user.username}"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToBuy.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Buying:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToBuy}" converter="currencyConverter"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToSell.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Selling:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell}" converter="currencyConverter" />
+			</rich:column>
+			
+			<rich:column sortBy="#{trader.currencyToBuy.type.code}" width="50px">
+				<f:facet name="header">
+					<h:outputText value="Buying Currency" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToBuy.type.code}" />
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToSell.type.code}" width="50px">
+				<f:facet name="header">
+					<h:outputText value="Selling Currency" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell.type.code}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Rate:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell.value/trader.currencyToBuy.value}" />
+			</rich:column>
+			<rich:column sortBy="#{trader.status}" width="100px">
+				<f:facet name="header">
+					<h:outputText value="Status" />
+				</f:facet>
+				<h:outputText value="#{trader.status}" />
+			</rich:column>
+			
+			
+		</rich:dataTable>
+
+	</h:form>
+
+</ui:composition>

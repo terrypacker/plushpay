@@ -1,0 +1,61 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/user_area/css/body.css" rel="stylesheet" type="text/css"/>
+
+	<rich:modalPanel id="updateAudBeneficiary" autosized="true">
+	<f:facet name="header">
+            <h:panelGroup>
+                <h:outputText styleClass="FormHeader" value="Update AUD Beneficiary"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:outputText value="Close" id="hideupdateAudBeneficiary"/>
+                <rich:componentControl for="updateAudBeneficiary" attachTo="hideupdateAudBeneficiary" operation="hide" event="onclick"/>
+            </h:panelGroup>
+        </f:facet>
+	
+	<h:form id="updateAudBeneficiaryForm">
+		<h:panelGrid columns="2">
+			
+			<h:outputText value="Name: " />
+			<h:inputText  id="updateAuddBeneficiaryName" required="true"
+				requiredMessage="Name is Required" 
+				value="#{beneficiaries.name}" 
+				maxlength="20" />
+
+			<h:outputText value="BSB Number" />
+			<h:inputText  id="audBsbNumber" required="true"
+				requiredMessage="Routing Number is Required" maxlength="30" 
+				value="#{beneficiaries.audDetails.bsbNumber}" >
+				 
+			</h:inputText>
+
+			<h:outputText value="Account Number" />
+			<h:inputText  id="audAccountNumber" required="true"
+				requiredMessage="Account Number is Required" maxlength="30"
+				value="#{beneficiaries.audDetails.accountNumber}" />
+
+			<h:inputHidden value="#{beneficiaries.id}" />
+			<h:inputHidden value="#{beneficiaries.audDetails.detailsId}" />
+			
+ 			<a4j:commandButton
+				actionListener="#{beneficiaries.updateAudBeneficiary}" 
+				reRender="updateAudBeneficiaryForm,beneficiary_list"
+				value="Done"
+				onclick="Richfaces.hideModalPanel('updateAudBeneficiary');">
+		
+			</a4j:commandButton>
+
+ 		</h:panelGrid>
+		
+	</h:form>	
+	</rich:modalPanel>
+
+</ui:composition>

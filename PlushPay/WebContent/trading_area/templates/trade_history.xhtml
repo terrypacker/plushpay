@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+	
+	<br></br>
+
+	<h:form >
+
+		<rich:dataTable
+			id="buyersTable"
+			var="trade" 
+			value="#{userTradeHistory.trades}" 
+			sortMode="mutiple">
+			
+			<f:facet name="header">
+				<h:outputText value="Trades" />
+			</f:facet>			
+		
+			<rich:column sortBy="#{trade.traderid}">
+				<f:facet name="header">
+					<h:outputText value="ID"/>
+				</f:facet>
+				<h:outputText value="#{trade.traderid}"/>
+			</rich:column>
+			<rich:column sortBy="#{trade.currencyToBuy.value}">
+				<f:facet name="header">
+					<h:outputText value="Buying"/>
+				</f:facet>
+				<h:outputText value="#{trade.currencyToBuy}"
+					converter="currencyConverter"/>
+			</rich:column>
+
+			<rich:column sortBy="#{trade.currencyToSell.value}">
+				<f:facet name="header">
+					<h:outputText value="Selling"/>
+				</f:facet>
+				<h:outputText value="#{trade.currencyToSell}"
+					converter="currencyConverter"/>
+			</rich:column>
+
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Beneficiaries"/>
+				</f:facet>
+				<rich:dataList var="tradeBeneficiary" value="#{trade.beneficiaries}">
+				<h:outputText value="#{tradeBeneficiary.beneficiary.name} "/>
+				<h:outputText value="#{tradeBeneficiary.amount}" 
+						converter="currencyConverter"/>
+				</rich:dataList>
+			</rich:column>
+
+			<rich:column sortBy="#{trade.status}">
+				<f:facet name="header">
+					<h:outputText value="Status"/>
+				</f:facet>
+				<h:outputText value="#{trade.status}"/>
+			</rich:column>
+		</rich:dataTable>
+
+	</h:form>
+	
+	
+			
+</ui:composition>

@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+
+To run a sample test click 
+	<h:panelGrid columns="2" border="2">
+		<f:facet name="header">
+			<h:outputText value="Available Tests"/>
+		</f:facet>
+
+		<h:outputText value="Sample Test" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.TestSampleServlet&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+		
+		<h:outputText value="Trade Test" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.TradeTest&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+		
+		<h:outputText value="Threading Test" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.TestThreading&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+		
+		<h:outputText value="Rate Test Data Test" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.currency.rate.testData.RateTestDataTest&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+		
+		<h:outputText value="Currency Type Test" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.currency.type.TestCurrencyType&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+
+
+		<h:outputText value="All Tests" />
+		<h:outputLink value="/PayYourself/ServletTestRunner?suite=com.payyourself.testing.AllTests&amp;xsl=cactus-report.xsl.xml">Run</h:outputLink>
+
+	</h:panelGrid>
+	
+</ui:composition>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" default-lazy="false" package="com.payyourself.trading.trader.group">
+ <class name="com.payyourself.trading.trader.group.TraderGroup" table="tradergroup">
+  <meta attribute="class-description">Group of Traders Buying and Selling the same currency types.</meta>
+  <meta attribute="extra-import">java.util.Collections</meta>
+  <meta attribute="class-code">//Additional Code By Terry Packer
+	
+	/**
+	 * Copy Constructor
+	 */
+	public TraderGroup(TraderGroup group){
+
+		this.setGroupid(group.getGroupid());
+		if(group.getCurrencyToBuy() != null)
+			this.setCurrencyToBuy(new PyCurrency(group.getCurrencyToBuy()));
+		if(group.getCurrencyToSell() != null)
+			this.setCurrencyToSell(new PyCurrency(group.getCurrencyToSell()));
+
+	}</meta>
+  <id name="groupid" type="long">
+   <column name="groupid" not-null="true" sql-type="BIGINT"/>
+   <generator class="increment"/>
+  </id>
+  <many-to-one cascade="all" class="com.payyourself.currency.PyCurrency" name="currencyToSell">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="currencytosellid" sql-type="BIGINT"/>
+  </many-to-one>
+  <many-to-one cascade="all" class="com.payyourself.currency.PyCurrency" name="currencyToBuy">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="currencytobuyid" sql-type="BIGINT"/>
+  </many-to-one>
+  <list cascade="all" name="traders" table="trader_group_traders">
+   <meta attribute="use-in-equals">true</meta>
+   <key column="groupid"/>
+   <index/>
+   <many-to-many class="com.payyourself.trading.trader.Trader"
+    column="traderid" unique="false"/>
+  </list>
+ </class>
+</hibernate-mapping>

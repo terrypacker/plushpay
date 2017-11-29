@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/PayYourself/registration_area/css/register.css" rel="stylesheet" type="text/css"/>
+	<br></br>
+		<h:outputFormat style="color: blue" rendered="#{registrationBean.registrationConfirmed}"  value="#{msg.success_registration}" >
+       	</h:outputFormat>
+	<h:form id="register">
+		<h:panelGrid columns="3">
+			
+			<h:outputText value="Username: " />
+			<h:inputText id="username" required="true"
+				value="#{registrationBean.info.username}" maxlength="20" requiredMessage="Please enter a username.">
+				<f:validator validatorId="usernameValidator" />
+			</h:inputText>
+			<h:message for="username" styleClass="errorMsg"/>
+			
+			<h:outputText value="First name: " />
+			<h:inputText  id="firstName"
+				value="#{registrationBean.info.firstname}" required="true"
+				requiredMessage="please enter users first name" maxlength="20" />
+			<h:message for="firstName"  styleClass="errorMsg"/>
+			
+			<h:outputText value="Last name:"  />
+			<h:inputText id="lastName"
+				value="#{registrationBean.info.lastname}" required="true"
+				requiredMessage="please enter users last name" maxlength="30" />
+			<h:message for="lastName" styleClass="errorMsg"/>
+			
+			<h:outputText value="Email: " />
+			<h:inputText id="email" required="true"
+				value="#{registrationBean.info.email}" maxlength="30" requiredMessage="Please enter an email address.">
+				<f:validator validatorId="emailValidator" />
+			</h:inputText>
+			<h:message for="email" styleClass="errorMsg"/>
+			
+			<h:outputText value="Password: " />
+			<h:inputSecret id="password" value="#{registrationBean.info.password}"
+				required="true" label="Password" size="15" maxlength="20" redisplay="true" requiredMessage="Please enter a password.">
+			</h:inputSecret>
+			<h:message for="password" styleClass="errorMsg"/>
+			
+			<h:outputText value="Confirm password: " />
+			<h:inputSecret id="confirm" value="#{registrationBean.info.password}"
+				required="true" label="Confirm password" size="15" maxlength="20" redisplay="true" requiredMessage="Please enter a password.">
+				<f:attribute name="passwordId" value="register:password" />
+				<f:validator validatorId="passwordValidator" />
+			</h:inputSecret>
+			<h:message for="confirm" styleClass="errorMsg" />
+			
+			<h:outputText value=""></h:outputText>
+			<h:commandLink action="#{registrationBean.register}">			
+ 				<h:outputText value="[Register]" id="submitButton"/>
+ 			</h:commandLink>
+ 			<h:outputText value=""></h:outputText>
+ 			
+ 		</h:panelGrid>
+		
+	</h:form>
+
+
+</ui:composition>

@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+	
+	<br></br>
+	<h:form id="createTradeForm" >
+	
+		<h:inputHidden value="#{createTrade.created}" />
+		<!-- Input to confirm that the benes are set to correct amounts -->
+		<h:inputHidden value="#{createTrade.beneficiaryCorrect}" 
+			required="true" requiredMessage="Please Ensure Beneficiaries are Correct"/>
+			
+		<a4j:commandButton 
+			type="submit" 
+			action="#{createTrade.computeExchangeRate}" 
+			value="empty"
+			reRender="beneficiaryAmountSpinner" />
+		
+		<h:panelGrid columns="2" styleClass="inputForm">
+			<h:panelGrid columns="3" >
+				<f:facet name="header">
+					<h:outputText value="New Trade" style="font-size: 16pt;"></h:outputText>
+				</f:facet>
+				
+				<rich:comboBox
+					id="beneficiaryList"
+					value="#{createTrade.selectedBeneficiary}"
+					enableManualInput="false"
+					suggestionValues="#{createTrade.availableBeneficiaries}"
+					defaultLabel="#{msg.select_a_beneficiary}" >
+	
+				</rich:comboBox>
+				<rich:inputNumberSpinner
+					id="beneficiaryAmountSpinner"
+					minValue="0.00"
+					maxValue="#{createTrade.beneficiaryMaxAllowed}"
+					step="10.00"
+					value="#{createTrade.beneficiaryAmount}"
+				>
+				</rich:inputNumberSpinner>
+				<a4j:commandButton value="Add Beneficiary"
+					actionListener="#{createTrade.addBeneficiary}" 
+					reRender="beneficiaryTable,beneficiaryList,beneficiaryAmountSpinner,createButton"/>
+					
+				<h:outputText value="#{msg.currency_to_buy}: " />
+				<rich:comboBox 
+					value="#{createTrade.newTrader.currencyToBuy.type}"
+					converter="currencyTypeConverter"
+					enableManualInput="false"
+					suggestionValues="#{createTrade.availableCurrencies}"
+					defaultLabel="#{msg.select_a_currency}..."
+					required="true"
+					requiredMessage="Please Select a Currency To Buy">
+					<a4j:support event="onselect" reRender="currencyToSell,exchangeRate,beneficiaryList,beneficiaryAmountSpinner" actionListener="#{createTrade.selectedCurrencyToBuy}" />
+				</rich:comboBox>
+				
+				<rich:inputNumberSpinner minValue="1.00" 
+					maxValue="50000.00" 
+					step="10.00" 
+					enableManualInput="true"
+	
+					value="#{createTrade.toBuy}"
+					>
+					<a4j:support 
+						event="oninputkeyup" 
+						reRender="currencyToSell,exchangeRate,beneficiaryAmountSpinner,createButton" 
+						actionListener="#{createTrade.computeExchangeRate}" />
+					<a4j:support 
+						event="onchange" 
+						reRender="currencyToSell,exchangeRate,beneficiaryAmountSpinner,createButton" 
+						actionListener="#{createTrade.computeExchangeRate}" />
+				
+				</rich:inputNumberSpinner>
+			
+				<h:outputText value="#{msg.currency_to_sell}:"></h:outputText>
+				<rich:comboBox 
+					value="#{createTrade.newTrader.currencyToSell.type}"
+					converter="currencyTypeConverter"
+					enableManualInput="false"
+					suggestionValues="#{createTrade.availableCurrencies}"
+					defaultLabel="#{msg.select_a_currency}..."
+					required="true"
+					requiredMessage="Please Select a Currency To Sell">
+					<a4j:support event="onselect" reRender="currencyToSell,exchangeRate" actionListener="#{createTrade.computeExchangeRate}"/>
+				</rich:comboBox>			
+					<a4j:region>
+						<h:outputText id="currencyToSell" 
+							converter="currencyConverter" style="font-size: 10pt;" 
+							value="#{createTrade.newTrader.currencyToSell}"/>
+						
+					</a4j:region>
+					
+					<h:outputText value="#{msg.rate_buy_sell}:"/>
+					<a4j:region>
+						<h:outputText id="exchangeRate"   style="font-size: 10pt;" value="#{createTrade.desiredRate}"
+						converter="currencyRateConverter"
+						></h:outputText>
+					</a4j:region>
+					<a4j:commandButton 
+						id="createButton"
+						oncomplete="Richfaces.showModalPanel('confirmTrade');" 
+						value="#{msg.create_trade}"
+						actionListener="#{createTrade.create}" 
+						disabled="#{!createTrade.beneficiaryCorrect}"
+						reRender="confirmTradeForm,currencyToSell,exchangeRate,beneficiaryAmountSpinner"/>
+					
+			</h:panelGrid>
+			<rich:dataTable
+				id="beneficiaryTable" 
+				value="#{createTrade.selectedBeneficiaries}"
+				var="bene"
+			>
+				<f:facet name="header">
+					<h:outputText value="Beneficiaries"></h:outputText>
+				</f:facet>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Name"/>
+					</f:facet>
+					<h:outputText value="#{bene.beneficiary.name}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="Amount"/>
+					</f:facet>
+					<h:outputText value="#{bene.amount}" 
+						converter="currencyValueConverter"/>
+				</rich:column>
+				<rich:column>
+					<a4j:commandButton oncomplete="Richfaces.showModalPanel('updateTradeBeneficiary');" value="Edit" 
+						actionListener="#{createTrade.beneficiaryEdit}" reRender="updateTradeBeneficiaryForm">
+						<f:attribute name="beneToEdit" value="#{bene}" />
+					</a4j:commandButton>
+				</rich:column>
+				<rich:column>
+					<a4j:commandButton value="Remove" 
+						actionListener="#{createTrade.removeBeneficiary}"
+						 reRender="beneficiaryTable,beneficiaryList,beneficiaryAmountSpinner,createButton">
+						<f:attribute 
+							name="beneToRemove" 
+							value="#{bene}" />
+					</a4j:commandButton>
+				</rich:column>				
+				
+			</rich:dataTable>
+		</h:panelGrid>
+
+	<h:outputText value="#{createTrade.status}" style="color: red;"></h:outputText>	
+
+	</h:form>
+
+</ui:composition>

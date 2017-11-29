@@ -1,0 +1,49 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+    <link href="/PayYourself/home/css/rates.css" rel="stylesheet" type="text/css"/>
+	<div id="ratesDiv">
+	<a4j:form id="exchangeRatesForm">
+		
+		<h:panelGrid id="formit" columns="1">
+			<rich:dataTable  id="ratesTable" width="100%" 
+					var="rate"
+					value="#{currentRates.rates}"  sortMode="multiple" reRender="codes,rates">
+				<rich:column id="codes" sortBy="#{rate.code}" width="120px">
+					<f:facet name="header">
+						<h:outputText value="Currency" />
+					</f:facet>
+					<a4j:support event="onclick" action="#{currentRates.changeBaseCurrency}" reRender="ratesTable"/>
+					<f:param name="currencyType" value="#{rate.code}"/>
+					<h:outputText value="#{rate}" converter="currencyTypeConverter"/>
+				</rich:column>
+				<rich:column id="rates" sortBy="#{rate.rateToBase}" width="120px">
+					<f:facet name="header">
+						<h:outputText value="Rate" />
+					</f:facet>
+					<h:outputText value="#{rate.rateToBase}" converter="currencyRateConverter"/>
+				</rich:column>
+			</rich:dataTable>
+
+			<f:facet name="footer">				
+				<h:panelGroup>
+				<rich:comboBox id="baseCurrencyInput"
+					value="#{currentRates.baseCurrency}"
+					converter="currencyTypeConverter"
+					suggestionValues="#{currentRates.rates}"
+					defaultLabel="Select a Base Currency...">
+					<!-- We have an action="home" because I can't figure out how to make the actionListener fire > 1 before a refresh :( -->
+					<a4j:support event="onselect" reRender="ratesTable" actionListener="#{currentRates.changeBaseCurrency}" action="home" />
+				</rich:comboBox>	
+				</h:panelGroup>
+				
+			</f:facet>
+		</h:panelGrid>
+</a4j:form>
+</div>
+</ui:composition>

@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+	<rich:modalPanel id="tradeConfirmed" autosized="true">
+	<f:facet name="header">
+            <h:panelGroup>
+                <h:outputText styleClass="FormHeader" value="Trade Confirmed"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+ 
+	<h:form id="tradeConfirmedForm" >
+		<h:panelGrid columns="1" width="200px">
+			<f:facet name="header">
+				<h:outputText value="Notice"></h:outputText>
+			</f:facet>		
+			<h:outputText value="Thank You. Trade Confirmed."/>
+			<h:outputText value="Confirmation Email has been sent."/>
+			
+			<f:facet name="footer">
+					<a4j:commandButton
+						value="OK" style="text-align: center "
+						onclick="Richfaces.hideModalPanel('tradeConfirmed');" />
+			</f:facet>
+			
+		</h:panelGrid>			
+	</h:form>
+
+	</rich:modalPanel>
+
+</ui:composition>

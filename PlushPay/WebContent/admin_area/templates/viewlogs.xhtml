@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/trading_area/css/trading.css" rel="stylesheet" type="text/css"/>
+
+	<br></br>
+	<h:form id="showLogfileForm">
+		<h:panelGrid columns="3" styleClass="inputForm">
+			<f:facet name="header">
+				<h:outputText value="Display Logfile" style="font-size: 16pt;"></h:outputText>
+			</f:facet>		
+			<h:outputText value="Choose File: " />
+			<rich:comboBox 
+				value="#{logfileFactory.logfileToDisplay}"
+				enableManualInput="false"
+				suggestionValues="#{logfileFactory.loggerNames}"
+				defaultLabel="Select a File..."
+				width="200px">
+				<a4j:support event="onselect" 
+					oncomplete="window.open('#{logfileFactory.logfileLocation}')" reRender="modalForm"/>
+			</rich:comboBox>
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

@@ -1,0 +1,220 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/css/payyourself.css" rel="stylesheet" type="text/css"/>
+
+
+	<br></br>
+		History
+	<br></br>
+
+	<h:form>
+			<h:panelGrid columns="3">
+			
+			<h:outputText value="#{msg.select_trade}: "></h:outputText>
+			<rich:comboBox value="#{tradeGeneratorDepositFundsTrades.chosenTrade}" suggestionValues="#{tradeGeneratorDepositFundsTrades.trades}"
+				converter="tradeConverter">
+			</rich:comboBox>
+			<h:outputText value=""></h:outputText>			
+			
+			<h:commandLink action="#{tradeGeneratorDepositFundsTrades.collectData}">			
+ 				<h:outputText value="[#{msg.display_trade}]" id="submitButton"/>
+ 			</h:commandLink>
+ 			<h:outputText value=""></h:outputText>
+ 			
+ 		</h:panelGrid>
+		<rich:dataTable
+			id="tradeTable"
+			var="trade"
+			styleClass="dataTable"
+			value="#{tradeGeneratorDepositFundsTrades.trades}"
+			sortMode="mutiple"
+		>
+		
+			<f:facet name="header">
+				<h:outputText value="Total Trades: #{tradeGeneratorDepositFundsTrades.totalTrades}"/>
+			</f:facet>
+			<rich:column sortBy="#{trade.tradeId}">
+				<f:facet name="header">
+					<h:outputText value="Trade ID"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{trade.tradeId}"></h:outputText>
+			</rich:column>
+			
+			<rich:column width="50px" sortBy="#{(trade.buyerSellMismatch + trade.buyerBuyMismatch)}">
+				<f:facet name="header">
+					<h:outputText value="Total Mismatch"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{(trade.buyerSellMismatch + trade.buyerBuyMismatch)/10000}"></h:outputText>
+			</rich:column>
+			
+			<rich:column sortBy="#{trade.buyerBuyMismatch}">
+				<f:facet name="header">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.totalBuyerBuyMismatch.type.code} Buffer"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{trade.buyerBuyMismatch/10000} #{trade.buyerGroup.currencyToBuy.type.code}"></h:outputText>
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.totalBuyerBuyMismatch}" converter="currencyConverter"/>
+				</f:facet>
+			</rich:column>
+			
+			<rich:column sortBy="#{trade.sellerBuyMismatch}" >
+				<f:facet name="header">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.totalSellerBuyMismatch.type.code} Buffer"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{trade.sellerBuyMismatch/10000} #{trade.sellerGroup.currencyToBuy.type.code}"></h:outputText>
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.totalSellerBuyMismatch}" converter="currencyConverter"></h:outputText>
+				</f:facet>
+				
+			</rich:column>
+
+			<rich:column width="100px">
+				<f:facet name="header">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.totalSellerBuyMismatch.type.code} Profit"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{(trade.buyerGroup.currencyToSell.value - trade.sellerGroup.currencyToBuy.value)/10000} #{trade.sellerGroup.currencyToBuy.type.code}" ></h:outputText>
+			</rich:column>
+
+			<rich:column width="100px">
+				<f:facet name="header">
+					<h:outputText value="$ #{tradeGeneratorDepositFundsTrades.totalBuyerBuyMismatch.type.code} Profit"></h:outputText>
+				</f:facet>
+				<h:outputText value="$ #{(trade.sellerGroup.currencyToSell.value - trade.buyerGroup.currencyToBuy.value)/10000} #{trade.sellerGroup.currencyToSell.type.code}" ></h:outputText>
+			</rich:column>
+			
+						
+			<rich:column sortBy="#{trade.status}" width="100px">
+				<f:facet name="header">
+					<h:outputText value="Status"></h:outputText>
+				</f:facet>
+				<h:outputText value="#{trade.status}"></h:outputText>
+			</rich:column>
+					
+		</rich:dataTable>
+	
+		<h:panelGrid rendered="#{tradeGeneratorDepositFundsTrades.tradeLoaded}" columns="1">
+	
+		<h:outputText value="Buyers" ></h:outputText>
+		<rich:dataTable
+			id="buyersTable" 
+			width="100%" 
+			var="trader" 
+			styleClass="dataTable" 
+			value="#{tradeGeneratorDepositFundsTrades.buyers.traders}" 
+			sortMode="mutiple">
+			
+			<f:facet name="header">
+				<h:outputText value="Total Buyers: #{tradeGeneratorDepositFundsTrades.buyers.numberOfTraders}"/>
+			</f:facet>
+			
+			<rich:column sortBy="#{trader.traderid}" width="50px">
+				<f:facet name="header">
+					<h:outputText value="Trader ID"/>
+				</f:facet>
+				<h:outputText value="#{trader.traderid}"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.username}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Username" />
+				</f:facet>
+				<h:outputText value="#{trader.user.username}"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToBuy.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Buying:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToBuy}" converter="currencyConverter"/>
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.buyers.currencyToBuy}" converter="currencyConverter" />
+				</f:facet>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToSell.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Selling:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell}" converter="currencyConverter" />
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.buyers.currencyToSell}" converter="currencyConverter" />
+				</f:facet>
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Rate:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell.value/trader.currencyToBuy.value}" />
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Status:" />
+				</f:facet>
+				<h:outputText value="#{trader.status}" />
+			</rich:column>
+		</rich:dataTable>
+		<h:outputText value="Sellers" ></h:outputText>
+		<rich:dataTable
+			id="sellersTable" 
+			var="trader" 
+			styleClass="dataTable" 
+			value="#{tradeGeneratorDepositFundsTrades.sellers.traders}" 
+			sortMode="mutiple">
+			
+						
+			<f:facet name="header">
+				<h:outputText value="Total Sellers: #{tradeGeneratorDepositFundsTrades.sellers.numberOfTraders}"/>
+			</f:facet>
+			
+			<rich:column sortBy="#{trader.traderid}" width="50px">
+				<f:facet name="header">
+					<h:outputText value="Trader ID"/>
+				</f:facet>
+				<h:outputText value="#{trader.traderid}"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.username}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Username" />
+				</f:facet>
+				<h:outputText value="#{trader.user.username}"/>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToBuy.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Buying:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToBuy}" converter="currencyConverter"/>
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.sellers.currencyToBuy}" converter="currencyConverter" />
+				</f:facet>
+			</rich:column>
+			<rich:column sortBy="#{trader.currencyToSell.value}" width="120px">
+				<f:facet name="header">
+					<h:outputText value="Selling:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToSell}" converter="currencyConverter" />
+				<f:facet name="footer">
+					<h:outputText value="#{tradeGeneratorDepositFundsTrades.sellers.currencyToSell}" converter="currencyConverter" />
+				</f:facet>
+			</rich:column>
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Rate:" />
+				</f:facet>
+				<h:outputText value="#{trader.currencyToBuy.value/trader.currencyToSell.value}" />
+			</rich:column>
+			
+			<rich:column>
+				<f:facet name="header">
+					<h:outputText value="Status:" />
+				</f:facet>
+				<h:outputText value="#{trader.status}" />
+			</rich:column>
+			
+		</rich:dataTable>
+		</h:panelGrid>
+	</h:form>
+
+</ui:composition>

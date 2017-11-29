@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-cascade="all" package="com.payyourself.trading.beneficiary.details">
+ <class lazy="false"
+  name="com.payyourself.trading.beneficiary.details.BeneficiaryDetails" table="beneficiary_details">
+  <id column="details_id" name="detailsId" type="long">
+   <generator class="native"/>
+  </id>
+  <joined-subclass name="UsdDetails" table="beneficiary_usd_details">
+   <key column="details_id" unique="true"/>
+   <property generated="never" lazy="false" name="accountNumber" type="string">
+    <column name="account_number" sql-type="VARCHAR(30)"/>
+   </property>
+   <property generated="never" lazy="false" name="routingNumber" type="string">
+    <column name="routing_number" sql-type="VARCHAR(30)"/>
+   </property>
+  </joined-subclass>
+  <joined-subclass name="AudDetails" table="beneficiary_aud_details">
+   <key column="details_id" unique="true"/>
+   <property generated="never" lazy="false" name="accountNumber" type="string">
+    <column name="account_number" sql-type="VARCHAR(30)"/>
+   </property>
+   <property generated="never" lazy="false" name="bsbNumber" type="string">
+    <column name="bsb_number" sql-type="VARCHAR(8)"/>
+   </property>
+  </joined-subclass>
+ </class>
+</hibernate-mapping>

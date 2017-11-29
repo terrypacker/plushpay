@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PROCESS model-entity="JSFProcess">
+ <PROCESS-ITEM NAME="rules:#trading_area#*" PATH="/trading_area/*"
+  SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#trading_area#*:0" NAME="item"
+   PATH="/trading_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="confirm_trade::#trading_area#confirm_trade.jsp" NAME="output"
+    PATH="/trading_area/confirm_trade.jsp"
+    TARGET="rules:#trading_area#confirm_trade.jsp" TITLE="confirm_trade" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="trade_confirmed::#trading_area#trade_confirmed.jsp"
+    NAME="output1" PATH="/trading_area/trade_confirmed.jsp"
+    TARGET="rules:#trading_area#trade_confirmed.jsp"
+    TITLE="trade_confirmed" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="create_trade::#trading_area#create_trade.jsp" NAME="output2"
+    PATH="/trading_area/create_trade.jsp"
+    TARGET="rules:#trading_area#create_trade.jsp" TITLE="create_trade" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="user_home::#user_area#user.jsp"
+    NAME="output3" PATH="/user_area/user.jsp"
+    TARGET="rules:#user_area#user.jsp" TITLE="user_home" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="history::#trading_area#trade_history.jsp"
+    NAME="output4" PATH="/trading_area/trade_history.jsp"
+    TARGET="rules:#trading_area#trade_history.jsp" TITLE="history" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="preferences::#user_area#preferences.jsp"
+    NAME="output5" PATH="/user_area/preferences.jsp"
+    TARGET="rules:#user_area#preferences.jsp" TITLE="preferences" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#trading_area#confirm_trade.jsp"
+  PATH="/trading_area/confirm_trade.jsp" SHAPE="240,33,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#trading_area#trade_confirmed.jsp"
+  PATH="/trading_area/trade_confirmed.jsp" SHAPE="32,129,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#trading_area#create_trade.jsp"
+  PATH="/trading_area/create_trade.jsp" SHAPE="272,209,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#*" PATH="/*" SHAPE="32,305,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#*:0" NAME="item" PATH="/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="register::#registration_area#register.jsp"
+    NAME="output" PATH="/registration_area/register.jsp"
+    TARGET="rules:#registration_area#register.jsp" TITLE="register" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="home::#home#start.jsp" NAME="output2"
+    PATH="/home/start.jsp" TARGET="rules:#home#start.jsp" TITLE="home" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="admin::#admin_area#administration.jsp"
+    NAME="output3" PATH="/admin_area/administration.jsp"
+    TARGET="rules:#admin_area#administration.jsp" TITLE="admin" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#registration_area#register.jsp"
+  PATH="/registration_area/register.jsp" SHAPE="240,321,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#home#start.jsp" PATH="/home/start.jsp"
+  SHAPE="32,561,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#user_area#*" PATH="/user_area/*"
+  SHAPE="32,817,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#user_area#*:0" NAME="item"
+   PATH="/user_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="create_trade::#trading_area#create_trade.jsp" NAME="output"
+    PATH="/trading_area/create_trade.jsp"
+    TARGET="rules:#trading_area#create_trade.jsp" TITLE="create_trade" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="history::#trading_area#trade_history.jsp"
+    NAME="output1" PATH="/trading_area/trade_history.jsp"
+    TARGET="rules:#trading_area#trade_history.jsp" TITLE="history" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="preferences::#user_area#preferences.jsp"
+    NAME="output2" PATH="/user_area/preferences.jsp"
+    TARGET="rules:#user_area#preferences.jsp" TITLE="preferences" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="user_home::#user_area#user.jsp"
+    NAME="output3" PATH="/user_area/user.jsp"
+    TARGET="rules:#user_area#user.jsp" TITLE="user_home" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="beneficiaries::#user_area#beneficiaries.jsp"
+    NAME="output4" PATH="/user_area/beneficiaries.jsp"
+    TARGET="rules:#user_area#beneficiaries.jsp" TITLE="beneficiaries" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#user_area#preferences.jsp"
+  PATH="/user_area/preferences.jsp" SHAPE="272,945,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#trading_area#trade_history.jsp"
+  PATH="/trading_area/trade_history.jsp" SHAPE="32,817,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#registration_area#*"
+  PATH="/registration_area/*" SHAPE="32,1345,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#registration_area#*:0" NAME="item"
+   PATH="/registration_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="registration_failed::#registration_area#register_fail.jsp"
+    NAME="output" PATH="/registration_area/register_fail.jsp"
+    TARGET="rules:#registration_area#register_fail.jsp"
+    TITLE="registration_failed" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="registration_success::#registration_area#register_success.jsp"
+    NAME="output1" PATH="/registration_area/register_success.jsp"
+    TARGET="rules:#registration_area#register_success.jsp"
+    TITLE="registration_success" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#registration_area#register_fail.jsp"
+  PATH="/registration_area/register_fail.jsp" SHAPE="32,2129,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#registration_area#register_success.jsp"
+  PATH="/registration_area/register_success.jsp" SHAPE="32,2577,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#free_traders.jsp"
+  PATH="/management_area/free_traders.jsp" SHAPE="288,4465,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM
+  NAME="rules:#management_area#trade_generator_settings.jsp"
+  PATH="/management_area/trade_generator_settings.jsp"
+  SHAPE="288,4113,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#management.jsp"
+  PATH="/management_area/management.jsp" SHAPE="288,4001,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#*" PATH="/management_area/*"
+  SHAPE="32,4913,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#management_area#*:0" NAME="item"
+   PATH="/management_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="generator_settings::#management_area#trade_generator_settings.jsp"
+    NAME="output" PATH="/management_area/trade_generator_settings.jsp"
+    TARGET="rules:#management_area#trade_generator_settings.jsp"
+    TITLE="generator_settings" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="management_home::#management_area#management.jsp" NAME="output2"
+    PATH="/management_area/management.jsp"
+    TARGET="rules:#management_area#management.jsp"
+    TITLE="management_home" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="free_traders::#management_area#free_traders.jsp" NAME="output3"
+    PATH="/management_area/free_traders.jsp"
+    TARGET="rules:#management_area#free_traders.jsp"
+    TITLE="free_traders" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="all_traders::#management_area#all_traders.jsp" NAME="output4"
+    PATH="/management_area/all_traders.jsp"
+    TARGET="rules:#management_area#all_traders.jsp" TITLE="all_traders" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT
+    ID="deposit_funds_trades::#management_area#deposit_funds_trades.jsp"
+    NAME="output1" PATH="/management_area/deposit_funds_trades.jsp"
+    TARGET="rules:#management_area#deposit_funds_trades.jsp"
+    TITLE="deposit_funds_trades" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="all_trades::#management_area#all_trades.jsp"
+    NAME="output5" PATH="/management_area/all_trades.jsp"
+    TARGET="rules:#management_area#all_trades.jsp" TITLE="all_trades" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#admin_area#*" PATH="/admin_area/*"
+  SHAPE="32,5425,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#admin_area#*:0" NAME="item"
+   PATH="/admin_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT ID="view_logs::#admin_area#viewlogs.jsp"
+    NAME="output" PATH="/admin_area/viewlogs.jsp"
+    TARGET="rules:#admin_area#viewlogs.jsp" TITLE="view_logs" model-entity="JSFProcessItemOutput"/>
+   <PROCESS-ITEM-OUTPUT ID="admin_home::#admin_area#administration.jsp"
+    NAME="output1" PATH="/admin_area/administration.jsp"
+    TARGET="rules:#admin_area#administration.jsp" TITLE="admin_home" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#admin_area#administration.jsp"
+  PATH="/admin_area/administration.jsp" SHAPE="256,5585,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#admin_area#viewlogs.jsp"
+  PATH="/admin_area/viewlogs.jsp" SHAPE="256,5441,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#user_area#user.jsp"
+  PATH="/user_area/user.jsp" SHAPE="32,5393,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#accounting_area#*" PATH="/accounting_area/*"
+  SHAPE="32,5393,0,0" model-entity="JSFProcessGroup">
+  <PROCESS-ITEM ID="rules:#accounting_area#*:0" NAME="item"
+   PATH="/accounting_area/*" model-entity="JSFProcessItem">
+   <PROCESS-ITEM-OUTPUT
+    ID="accounting_home::#accounting_area#accounting.jsp" NAME="output"
+    PATH="/accounting_area/accounting.jsp"
+    TARGET="rules:#accounting_area#accounting.jsp"
+    TITLE="accounting_home" model-entity="JSFProcessItemOutput"/>
+  </PROCESS-ITEM>
+ </PROCESS-ITEM>
+ <PROCESS-ITEM NAME="rules:#accounting_area#accounting.jsp"
+  PATH="/accounting_area/accounting.jsp" SHAPE="240,5745,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#user_area#beneficiaries.jsp"
+  PATH="/user_area/beneficiaries.jsp" SHAPE="320,1041,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#all_traders.jsp"
+  PATH="/management_area/all_traders.jsp" SHAPE="304,5233,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#deposit_funds_trades.jsp"
+  PATH="/management_area/deposit_funds_trades.jsp" SHAPE="304,5233,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#management_area#all_trades.jsp"
+  PATH="/management_area/all_trades.jsp" SHAPE="304,5233,0,0" model-entity="JSFProcessGroup"/>
+</PROCESS>

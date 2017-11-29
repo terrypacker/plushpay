@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/PayYourself/templates/css/header.css" rel="stylesheet" type="text/css"/>
+		<div id="headerGraphic">
+			<img src="/PayYourself/graphics/payYourself.gif" ></img>		
+		</div>
+		<h:form>
+			<h:panelGrid columns="1" align="left" style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="#{createTrade.newTrade}" value="New Trade"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1" align="left" style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="open_trades" value = "Open Trades"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1" align="left" style="width: 10%; border-width: 2pt 2pt 2pt 2pt;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="closed_trades" value = "Closed Trades"></a4j:commandLink>
+			</h:panelGrid>
+
+			<h:panelGrid columns="2" align="right" style="width: 70%;" styleClass="loginInfo" columnClasses="alignCenter,alignRight">
+				<h:outputText styleClass="loginStatus" value="Welcome #{createTrade.newTrader.user.firstname} #{createTrade.newTrader.user.lastname}"/>
+				<h:panelGroup>
+					| <a4j:commandLink styleClass="loginStatus" action="logout" value="Logout"  style="color: black; font-size: 8pt;"/>|
+				</h:panelGroup>		
+			</h:panelGrid>
+	</h:form>
+</ui:composition>

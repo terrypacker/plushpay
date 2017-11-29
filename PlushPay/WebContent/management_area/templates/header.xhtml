@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+	<link href="/PayYourself/css/header.css" rel="stylesheet" type="text/css"/>
+	
+	<f:loadBundle var="msg" basename="com.payyourself.locale.Locale"/>
+		<div id="headerGraphic">
+			<img src="/PayYourself/graphics/payYourself.gif" ></img>		
+		</div>
+		<h:form>
+			<h:panelGrid columns="1"  style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="generator_settings" value="#{msg.settings}"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1"  style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="all_trades" value = "#{msg.all_trades}"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1"  style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="deposit_funds_trades" value = "#{msg.deposit_funds_trades}"></a4j:commandLink>
+			</h:panelGrid>
+			<h:panelGrid columns="1"  style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="free_traders" value = "#{msg.free_traders}"></a4j:commandLink>
+			</h:panelGrid>	
+			<h:panelGrid columns="1"  style="width: 10%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="all_traders" value = "#{msg.all_traders}"></a4j:commandLink>
+			</h:panelGrid>	
+			
+			<h:panelGrid columns="1"  style="width: 20%;" styleClass="menuBar" columnClasses="alignCenter">
+				<a4j:commandLink action="management_home" value = "#{msg.management_home}"></a4j:commandLink>
+			</h:panelGrid>			
+
+			<h:panelGrid columns="2" style="width: 30%; border-width: 2pt 2pt 2pt 2pt;" styleClass="loginInfo" columnClasses="alignCenter,alignRight">
+				<h:outputText styleClass="loginStatus" value="#{msg.generator_area}"/>
+				<h:panelGroup>
+					|<h:outputLink styleClass="loginStatus" value="/PayYourself/app/logout"  style="color: black; font-size: 8pt;">
+						<h:outputText value="#{msg.logout}"/>
+					</h:outputLink>|
+				</h:panelGroup>		
+			</h:panelGrid>
+	</h:form>
+</ui:composition>

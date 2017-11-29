@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 18, 2009 4:59:52 AM by Hibernate Tools 3.2.5.Beta -->
+<hibernate-mapping package="com.payyourself.currency.type">
+ <class name="com.payyourself.accounting.transaction.Transaction" table="transaction">
+  <id name="id" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="id" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+  <property name="credit" type="boolean">
+   <column name="credit" sql-type="BIT"/>
+  </property>
+  <property name="date" type="calendar">
+   <column name="date" sql-type="DATE"/>
+  </property>
+  <many-to-one class="com.payyourself.accounting.period.Period" name="period">
+   <column name="period_id" sql-type="INTEGER"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.accounting.account.Account" name="account">
+   <column name="account_id" sql-type="INTEGER"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.currency.PyCurrency" name="amount">
+   <column name="pycurrency_id" sql-type="BIGINT"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.userManagement.user.User" name="user">
+   <column name="username" sql-type="VARCHAR(20)"/>
+  </many-to-one>
+  <many-to-one class="com.payyourself.accounting.journal.Journal" name="journal">
+   <column name="journal_id" sql-type="BIGINT"/>
+  </many-to-one>
+ </class>
+</hibernate-mapping>

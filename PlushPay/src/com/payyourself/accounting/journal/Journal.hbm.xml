@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jul 18, 2009 4:59:52 AM by Hibernate Tools 3.2.5.Beta -->
+<hibernate-mapping package="com.payyourself.currency.type">
+ <class name="com.payyourself.accounting.journal.Journal" table="account">
+  <id name="id" type="long">
+   <meta attribute="use-in-tostring">true</meta>
+   <meta attribute="use-in-equals">true</meta>
+   <column name="id" not-null="true" sql-type="BIGINT" unique="true"/>
+   <generator class="increment"/>
+  </id>
+ </class>
+</hibernate-mapping>

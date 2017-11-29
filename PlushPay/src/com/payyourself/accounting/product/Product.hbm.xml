@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+                                   "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="com.payyourself.accounting.product">
+ <class name="com.payyourself.accounting.product.Product" table="products">
+  <id name="id" type="int">
+   <column name="id" not-null="true" sql-type="INT"/>
+   <generator class="increment"/>
+  </id>
+  <property name="fee" type="float">
+   <column name="fee" sql-type="FLOAT"/>
+  </property>
+  <property name="active" type="boolean">
+   <column name="active" sql-type="BIT">
+    <comment>Denotes if product is actively being used in system.</comment>
+   </column>
+  </property>
+ </class>
+</hibernate-mapping>

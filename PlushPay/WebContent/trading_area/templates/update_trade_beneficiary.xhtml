@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:util="http://java.sun.com/jsf/composite/components/util"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+    >
+<link href="/user_area/css/body.css" rel="stylesheet" type="text/css"/>
+
+	<rich:modalPanel id="updateTradeBeneficiary" autosized="true">
+	<f:facet name="header">
+            <h:panelGroup>
+                <h:outputText styleClass="FormHeader" value="Update Beneficiary"></h:outputText>
+            </h:panelGroup>
+        </f:facet>
+        <f:facet name="controls">
+            <h:panelGroup>
+                <h:outputText value="Close" id="hideupdateTradeBeneficiary"/>
+                <rich:componentControl for="updateTradeBeneficiary" attachTo="hideupdateTradeBeneficiary" operation="hide" event="onclick"/>
+            </h:panelGroup>
+        </f:facet>
+	
+	<h:form id="updateTradeBeneficiaryForm">
+		<h:panelGrid columns="2">
+			
+			<h:outputText value="Name: " />
+			<h:outputText value="#{createTrade.beneficiaryName}"/>
+			
+			<h:outputText value="Amount: "/>
+			<rich:inputNumberSpinner
+				id="beneficiaryAmountUpdateSpinner"
+				minValue="0.00"
+				maxValue="#{createTrade.beneficiaryEditAmount}"
+				step="10.00"
+				value="#{createTrade.beneficiaryEditAmount}"
+				required="true"
+			/>
+			
+			<h:inputHidden value="#{createTrade.beneficiaryId}" />
+			
+ 			<a4j:commandButton
+				actionListener="#{createTrade.updateBeneficiary}" 
+				reRender="beneficiaryTable,beneficiaryAmountSpinner"
+				value="Done"
+				onclick="Richfaces.hideModalPanel('updateTradeBeneficiary');">
+		
+			</a4j:commandButton>
+ 		</h:panelGrid>
+		
+	</h:form>	
+	</rich:modalPanel>
+
+</ui:composition>
