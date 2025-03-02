@@ -1,0 +1,4 @@
+com:
+  plushpay:
+    simulation:
+      enabled: true
