@@ -12,9 +12,11 @@ public abstract class AbstractInMemoryRepository<T extends IdEntity<ID>, ID> imp
     PlushPayRespository<T, ID> {
 
     protected final List<T> rows;
+    protected final IdGenerator<ID> idGenerator;
 
-    public AbstractInMemoryRepository() {
+    public AbstractInMemoryRepository(IdGenerator<ID> idGenerator) {
         this.rows = new CopyOnWriteArrayList<>();
+        this.idGenerator = idGenerator;
     }
 
     @Override
@@ -29,9 +31,13 @@ public abstract class AbstractInMemoryRepository<T extends IdEntity<ID>, ID> imp
 
     @Override
     public Optional<T> save(T t) {
-        Optional<T> existing = findById(t.getId());
-        if (existing.isPresent()) {
-            delete(existing.get());
+        if (t.getId() == null) {
+            t.setId(generateNewId());
+        } else {
+            Optional<T> existing = findById(t.getId());
+            if (existing.isPresent()) {
+                delete(existing.get());
+            }
         }
         rows.add(t);
         return Optional.of(t);
@@ -40,6 +46,10 @@ public abstract class AbstractInMemoryRepository<T extends IdEntity<ID>, ID> imp
     @Override
     public void delete(T t) {
         rows.remove(t);
+    }
+
+    public ID generateNewId() {
+        return idGenerator.generateId();
     }
 
 }

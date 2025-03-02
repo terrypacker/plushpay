@@ -169,7 +169,7 @@ public class AudBankSimulator extends Thread {
         for (int i = 0; i < file.getDetails().size(); i++) {
 
             if (file.getDetails().get(i).getUserAccountNumber()
-                .equals(AudBankSimulator.accountNumber)) {
+                .equals(accountNumber)) {
                 //Is it for our account?
                 NabTransactionCode code = file.getDetails().get(i).getCode();
 
@@ -350,7 +350,6 @@ public class AudBankSimulator extends Thread {
         //TODO Check thread state before starting
         this.shutdown = false;
         this.start();
-
     }
 
 

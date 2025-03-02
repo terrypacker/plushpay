@@ -2,7 +2,7 @@ package com.plushpay.service.trading.greedy;
 
 import java.util.List;
 
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trader.Trader;
 
 public class GreedySolver {
 
@@ -51,9 +51,9 @@ public class GreedySolver {
             best.addBuyer(this.buyers.get(bestPos));
             this.buyers.remove(bestPos);
 
-			if (this.sellers.size() == 0) {
-				break;
-			}
+            if (this.sellers.size() == 0) {
+                break;
+            }
 
             bestValue = best.testSeller(sellers.get(0));
             bestPos = 0;

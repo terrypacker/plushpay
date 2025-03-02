@@ -1,16 +1,16 @@
 package com.plushpay.service.trading.evolution;
 
+import com.plushpay.repository.trader.Trader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import org.apache.log4j.Logger;
-
-import com.plushpay.log.LogfileFactory;
-import com.plushpay.repository.trading.trader.Trader;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class Population {
+
+    private Log log = LogFactory.getLog(getClass());
 
     private static final int NUM_PARENTS = 2; //Something wrong when > 2???
     private static final int NUM_KIDS = 5;
@@ -33,8 +33,6 @@ public class Population {
     private List<Trader> availableBuyers;
     private List<Trader> availableSellers;
 
-    private Logger log;
-
     private Creature best;
 
     public Population() {
@@ -52,10 +50,6 @@ public class Population {
         this.unfitSelectionRatio = .2f; //Larger more unfit will be removed
 
         this.fate = new Random();
-
-        this.log = LogfileFactory.getHTMLLogger(this.getClass());
-
-
     }
 
     /**
@@ -422,9 +416,9 @@ public class Population {
         if (this.creatures.size() == 0) {
 
             //If either buyers or sellers are 0 we can't do this
-			if ((this.availableBuyers.size() == 0) || (this.availableSellers.size() == 0)) {
-				return;
-			}
+            if ((this.availableBuyers.size() == 0) || (this.availableSellers.size() == 0)) {
+                return;
+            }
 
             //More Sellers
             if (this.availableSellers.size() > this.availableBuyers.size()) {

@@ -29,6 +29,10 @@ public class PyCurrency implements Comparable, IdEntity<Long> {
         return this.currencyId;
     }
 
+    public void setId(Long currencyId) {
+        this.currencyId = currencyId;
+    }
+
     public void setCurrencyId(Long currencyId) {
         this.currencyId = currencyId;
     }

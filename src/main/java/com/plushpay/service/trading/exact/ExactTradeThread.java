@@ -2,7 +2,7 @@ package com.plushpay.service.trading.exact;
 
 import java.util.List;
 
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trader.Trader;
 
 public class ExactTradeThread extends Thread {
 

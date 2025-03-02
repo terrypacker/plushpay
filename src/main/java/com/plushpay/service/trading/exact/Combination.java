@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroup;
 
 
 public class Combination implements Comparable<Combination> {
@@ -350,9 +350,9 @@ public class Combination implements Comparable<Combination> {
         for (int i = 0; i < this.sellers.size(); i++) {
             for (int j = 0; j < this.sellers.size(); j++) {
                 if (this.sellers.get(i).equals(this.sellers.get(j))) {
-					if (i != j) {
-						throw new Exception("Two occurances of same Sellers in group!");
-					}
+                    if (i != j) {
+                        throw new Exception("Two occurances of same Sellers in group!");
+                    }
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.plushpay.service.trading.exact.sorted;
 
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroup;
 import com.plushpay.service.currency.PyCurrency;
 import java.util.ArrayList;
 import java.util.List;

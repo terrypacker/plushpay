@@ -1,16 +1,14 @@
 package com.plushpay.service.trading.exact;
 
-import com.plushpay.log.LogfileFactory;
-import com.plushpay.persistence.HibernateUtil;
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
+import com.plushpay.repository.tradergroup.TraderGroup;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.service.trading.trade.TradeHibernation;
+import com.plushpay.service.trade.TradeService;
 import com.plushpay.service.trading.tradeGenerator.TradeEmailGenerator;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.service.trading.trader.TraderHibernation;
-import com.plushpay.repository.trading.trader.TraderStatus;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.service.trader.TraderService;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,15 +17,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class ExactTradeManager extends Thread {
 
     private static final String CSV_HEADER = "Algo Interval,ROI,Gain,Cost,Number Buyers,NumberSellers,Computation Time,Number of Combinations\n";
-
-
-    private Logger log;
+    private Log log = LogFactory.getLog(getClass());
 
     private TradeCombinationGenerator gen;
     private Combination best;
@@ -54,42 +50,19 @@ public class ExactTradeManager extends Thread {
     private int buyerStartPos;
     private int sellerEndPos;
 
-
     private int buyerEndPos;
-
-
     private int sellerStartPos;
 
 
-    private static ExactTradeManager singleton;
+    private final TradeService tradeService;
+    private final TraderService traderService;
 
-    public static ExactTradeManager getExactTradeManager() {
-        if (ExactTradeManager.singleton == null)
-        // it's ok, we can call this constructor
-        {
-            ExactTradeManager.singleton = new ExactTradeManager();
-        }
-        return singleton;
+    public ExactTradeManager(TradeService tradeService, TraderService traderService) {
+        super("Exact Trade Manager");
+        this.tradeService = tradeService;
+        this.traderService = traderService;
     }
 
-    public Object clone()
-        throws CloneNotSupportedException {
-        throw new CloneNotSupportedException();
-        // that'll teach 'em
-    }
-
-
-    /**
-     * Empty Constructor for bean use.
-     */
-    private ExactTradeManager() {
-        super("Geneict Trade Manager");
-        this.log = LogfileFactory.getHTMLLogger(this.getClass());
-    }
-
-    /**
-     *
-     */
     public void run() {
 
         this.log.debug("Starting Genetic Trade Manager.");
@@ -121,11 +94,6 @@ public class ExactTradeManager extends Thread {
 
         }
 
-        Session tradeSession = HibernateUtil.getSessionFactory().getCurrentSession();
-        tradeSession.beginTransaction();
-
-        //TODO CLose Hibernate Session and re-open for create trade
-
         this.reset(); //Setup the initial params
 
         while (!this.shutdown) {
@@ -144,7 +112,7 @@ public class ExactTradeManager extends Thread {
             Combination best = this.foundTrade();
             if (best != null) {
 
-                this.createTrade(best, tradeSession);
+                this.createTrade(best);
 
             } else {//end if we got a trade.
                 //No Trade found this iteration
@@ -176,7 +144,7 @@ public class ExactTradeManager extends Thread {
     }
 
 
-    private void createTrade(Combination best, Session tradeSession) {
+    private void createTrade(Combination best) {
 
         this.log.debug("Creating Trade: Gain of " + best.getGain() + " Cost of " + best.getCost());
 
@@ -188,7 +156,7 @@ public class ExactTradeManager extends Thread {
         /*Remove the 0 value trader AND set all buyers status to DEPOSIT*/
         for (int i = 0; i < best.getBuyers().size(); i++) {
             //Set all trader status to DEPOSIT, awaiting deposit.
-            best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT.name());
+            best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT);
 
         }
 
@@ -204,7 +172,7 @@ public class ExactTradeManager extends Thread {
 
         /*Remove the 0 value trader AND set sellers status to DEPOST*/
         for (int i = 0; i < best.getSellers().size(); i++) {
-            best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT.name());
+            best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT);
 
         }
 
@@ -223,7 +191,7 @@ public class ExactTradeManager extends Thread {
         newTrade.setBuyerGroup(buyersGroup);
         newTrade.setSellerGroup(sellersGroup);
         newTrade.setDateCreated(Calendar.getInstance());
-        newTrade.setStatus(TradeStatus.DEPOSIT.name()); //Set the trade status
+        newTrade.setStatus(TradeStatus.DEPOSIT); //Set the trade status
         //Should set the expiry date too
 
         //Compute the profit and log it
@@ -235,9 +203,7 @@ public class ExactTradeManager extends Thread {
             "Trade Profits: " + buyerProfit + buyersGroup.getCurrencyToSell().getType().getCode() +
                 " " + sellerProfit + sellersGroup.getCurrencyToSell().getType().getCode());
 
-        TradeHibernation trh = new TradeHibernation();
-        newTrade = trh.mergeAndUpdateMembers(newTrade);
-        tradeSession.flush(); //Flush to DB
+        newTrade = tradeService.save(newTrade).get();
 
         //WRite an empty line to the file to indicate a trade was made
 
@@ -512,19 +478,10 @@ public class ExactTradeManager extends Thread {
      */
     private List<Trader> getNewSellers() {
         //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < this.currentSellers.size(); i++) {
-            ids.add(this.currentSellers.get(i).getTraderid());
-        }
-        List<Trader> newSellers = th.loadSortedFreeTradersExcept(ids, CurrencyCodeEnum.AUD,
-            CurrencyCodeEnum.USD);
-
+        List<Trader> newSellers = traderService.getFreeTradersExcept(CurrencyCodeEnum.AUD,
+            CurrencyCodeEnum.USD, this.currentSellers, false).toList();
         this.log.debug("Adding " + newSellers.size() + " Sellers.");
-
         this.currentSellers.addAll(newSellers);
-
         return newSellers;
     }
 
@@ -534,20 +491,12 @@ public class ExactTradeManager extends Thread {
      * @return
      */
     private List<Trader> getNewBuyers() {
-        //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < this.currentBuyers.size(); i++) {
-            ids.add(this.currentBuyers.get(i).getTraderid());
-        }
-        List<Trader> newBuyers = th.loadSortedFreeTradersExcept(ids, CurrencyCodeEnum.USD,
-            CurrencyCodeEnum.AUD);
-
+        //Load in all free buyers of this currency Type
+        // TODO and lock them
+        List<Trader> newBuyers = traderService.getFreeTradersExcept(CurrencyCodeEnum.USD,
+            CurrencyCodeEnum.AUD, this.currentBuyers, true).toList();
         this.log.debug("Adding " + newBuyers.size() + " Buyers.");
-
         this.currentBuyers.addAll(newBuyers);
-
         return newBuyers;
     }
 

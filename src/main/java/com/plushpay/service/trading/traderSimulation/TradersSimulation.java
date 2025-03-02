@@ -1,15 +1,15 @@
 package com.plushpay.service.trading.traderSimulation;
 
 import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.TraderStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.repository.user.User;
 import com.plushpay.service.currency.CurrencyService;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
-import com.plushpay.service.trading.trader.TraderService;
+import com.plushpay.service.trader.TraderService;
 import com.plushpay.service.user.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -191,7 +191,7 @@ public class TradersSimulation extends Thread {
 
                 //TODO Upgrade ENUM Types using com.payyourself.enumUserType
                 trader = new Trader(null, user, toBuy.get(i),
-                    currencyToSell, TraderStatus.CONFIRMED.name(),
+                    currencyToSell, TraderStatus.CONFIRMED,
                     benies);
                 traders.add(trader); //Insert him to be persisted
                 //TODO Upgrade ENUM Types using com.payyourself.enumUserType
@@ -219,7 +219,7 @@ public class TradersSimulation extends Thread {
                 }
 
                 trader = new Trader(null, user, toBuy.get(i),
-                    currencyToSell, TraderStatus.CONFIRMED.name(),
+                    currencyToSell, TraderStatus.CONFIRMED,
                     benies);
                 traders.add(trader); //Insert him to be persisted
 

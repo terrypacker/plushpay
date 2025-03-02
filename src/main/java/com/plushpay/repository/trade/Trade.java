@@ -1,9 +1,9 @@
-package com.plushpay.repository.trading.trade;
+package com.plushpay.repository.trade;
 
 // Generated Apr 24, 2010 1:54:05 PM by Hibernate Tools 3.2.5.Beta
 
 import com.plushpay.repository.IdEntity;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroup;
 import java.util.Calendar;
 
 /**

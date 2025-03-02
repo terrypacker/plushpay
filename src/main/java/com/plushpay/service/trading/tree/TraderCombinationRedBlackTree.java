@@ -1,24 +1,22 @@
-package com.plushpay.service.trading.tradeTree;
+package com.plushpay.service.trading.tree;
 
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-
-import com.plushpay.log.LogfileFactory;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 public class TraderCombinationRedBlackTree {
 
-    private Logger log;
+    private Log log = LogFactory.getLog(getClass());
+
     private TreeMap<Long, TraderCombinationNode> tree; //Java Collections Red Black Tree
     private List<TraderCombinationNode> nodes; //All nodes in the tree...
 
@@ -26,8 +24,6 @@ public class TraderCombinationRedBlackTree {
     public TraderCombinationRedBlackTree() {
         this.tree = new TreeMap<Long, TraderCombinationNode>();
         this.nodes = new ArrayList<TraderCombinationNode>();
-        this.log = LogfileFactory.getHTMLLogger(Level.ALL, this.getClass());
-
     }
 
     /**
@@ -424,7 +420,6 @@ public class TraderCombinationRedBlackTree {
      * NOT FULLY TESTED
      *
      * @param buyer
-     * @param delta
      * @param cropAbove
      * @throws Exception
      */

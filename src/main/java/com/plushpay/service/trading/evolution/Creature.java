@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import com.plushpay.service.currency.PyCurrency;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroup;
 
 /**
  * Creature compared on
@@ -252,9 +252,9 @@ public class Creature implements Comparable<Creature> {
             for (int m = 1; m < this.buyers.size(); m++) {
 
                 if (this.fate.nextFloat() > .5) {
-					if (!buyers.contains(this.buyers.get(m))) {
-						buyers.add(this.buyers.get(m));
-					}
+                    if (!buyers.contains(this.buyers.get(m))) {
+                        buyers.add(this.buyers.get(m));
+                    }
                 }
 
             }
@@ -265,9 +265,9 @@ public class Creature implements Comparable<Creature> {
 
             for (int m = 1; m < this.sellers.size(); m++) {
                 if (this.fate.nextFloat() > .5) {
-					if (!sellers.contains(this.sellers.get(m))) {
-						sellers.add(this.sellers.get(m));
-					}
+                    if (!sellers.contains(this.sellers.get(m))) {
+                        sellers.add(this.sellers.get(m));
+                    }
                 }
             }
 
@@ -278,9 +278,9 @@ public class Creature implements Comparable<Creature> {
                 for (int m = 0; m < partners.get(i).getBuyers().size(); m++) {
 
                     if (this.fate.nextFloat() > .5) {
-						if (!buyers.contains(partners.get(i).getBuyers().get(m))) {
-							buyers.add(partners.get(i).getBuyers().get(m));
-						}
+                        if (!buyers.contains(partners.get(i).getBuyers().get(m))) {
+                            buyers.add(partners.get(i).getBuyers().get(m));
+                        }
                     }
 
                 }
@@ -288,9 +288,9 @@ public class Creature implements Comparable<Creature> {
                 //Add some of the sellers
                 for (int m = 0; m < partners.get(i).getSellers().size(); m++) {
                     if (this.fate.nextFloat() > .5) {
-						if (!sellers.contains(partners.get(i).getSellers().get(m))) {
-							sellers.add(partners.get(i).getSellers().get(m));
-						}
+                        if (!sellers.contains(partners.get(i).getSellers().get(m))) {
+                            sellers.add(partners.get(i).getSellers().get(m));
+                        }
                     }
                 }
             }//end for partners
@@ -555,9 +555,9 @@ public class Creature implements Comparable<Creature> {
         //If we didn't get any buyers then we need at least one from each parent
         if (newBuyers.size() == 0) {
             newBuyers.add(this.buyers.get(0));
-			if (!newBuyers.contains(thoseBuyers.get(0))) {
-				newBuyers.add(thoseBuyers.get(0));
-			}
+            if (!newBuyers.contains(thoseBuyers.get(0))) {
+                newBuyers.add(thoseBuyers.get(0));
+            }
         }
 
         if (this.sellers.size() > 4) {
@@ -906,40 +906,40 @@ public class Creature implements Comparable<Creature> {
      */
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         Creature other = (Creature) obj;
-		if (buyerProfit != other.buyerProfit) {
-			return false;
-		}
+        if (buyerProfit != other.buyerProfit) {
+            return false;
+        }
         if (buyers == null) {
-			if (other.buyers != null) {
-				return false;
-			}
+            if (other.buyers != null) {
+                return false;
+            }
         } else if (!buyers.equals(other.buyers)) {
-			return false;
-		}
+            return false;
+        }
         if (buyersCurrencyToBuy == null) {
-			if (other.buyersCurrencyToBuy != null) {
-				return false;
-			}
+            if (other.buyersCurrencyToBuy != null) {
+                return false;
+            }
         } else if (!buyersCurrencyToBuy.equals(other.buyersCurrencyToBuy)) {
-			return false;
-		}
+            return false;
+        }
         if (buyersCurrencyToSell == null) {
-			if (other.buyersCurrencyToSell != null) {
-				return false;
-			}
+            if (other.buyersCurrencyToSell != null) {
+                return false;
+            }
         } else if (!buyersCurrencyToSell.equals(other.buyersCurrencyToSell)) {
-			return false;
-		}
+            return false;
+        }
 /* Don't care about the creatures fate
  * 		if (fate == null) {
 			if (other.fate != null)
@@ -947,30 +947,30 @@ public class Creature implements Comparable<Creature> {
 		} else if (!fate.equals(other.fate))
 			return false;
 */
-		if (sellerProfit != other.sellerProfit) {
-			return false;
-		}
+        if (sellerProfit != other.sellerProfit) {
+            return false;
+        }
         if (sellers == null) {
-			if (other.sellers != null) {
-				return false;
-			}
+            if (other.sellers != null) {
+                return false;
+            }
         } else if (!sellers.equals(other.sellers)) {
-			return false;
-		}
+            return false;
+        }
         if (sellersCurrencyToBuy == null) {
-			if (other.sellersCurrencyToBuy != null) {
-				return false;
-			}
+            if (other.sellersCurrencyToBuy != null) {
+                return false;
+            }
         } else if (!sellersCurrencyToBuy.equals(other.sellersCurrencyToBuy)) {
-			return false;
-		}
+            return false;
+        }
         if (sellersCurrencyToSell == null) {
-			if (other.sellersCurrencyToSell != null) {
-				return false;
-			}
+            if (other.sellersCurrencyToSell != null) {
+                return false;
+            }
         } else if (!sellersCurrencyToSell.equals(other.sellersCurrencyToSell)) {
-			return false;
-		}
+            return false;
+        }
         return true;
     }
 

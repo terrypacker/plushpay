@@ -1,6 +1,7 @@
 package com.plushpay.repository.user;
 
 import com.plushpay.repository.AbstractInMemoryRepository;
+import com.plushpay.repository.IntegerIdGenerator;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -9,4 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepository extends AbstractInMemoryRepository<User, Integer> {
 
+    public UserRepository() {
+        super(new IntegerIdGenerator());
+    }
 }

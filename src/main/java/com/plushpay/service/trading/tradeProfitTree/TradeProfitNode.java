@@ -1,6 +1,6 @@
 package com.plushpay.service.trading.tradeProfitTree;
 
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 
 public class TradeProfitNode implements Comparable<TradeProfitNode> {
 
@@ -84,58 +84,58 @@ public class TradeProfitNode implements Comparable<TradeProfitNode> {
      */
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         TradeProfitNode other = (TradeProfitNode) obj;
         if (buyers == null) {
-			if (other.buyers != null) {
-				return false;
-			}
+            if (other.buyers != null) {
+                return false;
+            }
         } else if (!buyers.equals(other.buyers)) {
-			return false;
-		}
+            return false;
+        }
         if (key == null) {
-			if (other.key != null) {
-				return false;
-			}
+            if (other.key != null) {
+                return false;
+            }
         } else if (!key.equals(other.key)) {
-			return false;
-		}
+            return false;
+        }
         if (leftNode == null) {
-			if (other.leftNode != null) {
-				return false;
-			}
+            if (other.leftNode != null) {
+                return false;
+            }
         } else if (!leftNode.equals(other.leftNode)) {
-			return false;
-		}
+            return false;
+        }
         if (parent == null) {
-			if (other.parent != null) {
-				return false;
-			}
+            if (other.parent != null) {
+                return false;
+            }
         } else if (!parent.equals(other.parent)) {
-			return false;
-		}
+            return false;
+        }
         if (rightNode == null) {
-			if (other.rightNode != null) {
-				return false;
-			}
+            if (other.rightNode != null) {
+                return false;
+            }
         } else if (!rightNode.equals(other.rightNode)) {
-			return false;
-		}
+            return false;
+        }
         if (sellers == null) {
-			if (other.sellers != null) {
-				return false;
-			}
+            if (other.sellers != null) {
+                return false;
+            }
         } else if (!sellers.equals(other.sellers)) {
-			return false;
-		}
+            return false;
+        }
         return true;
     }
 

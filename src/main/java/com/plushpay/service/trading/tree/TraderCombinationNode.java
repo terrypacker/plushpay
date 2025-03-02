@@ -1,6 +1,6 @@
-package com.plushpay.service.trading.tradeTree;
+package com.plushpay.service.trading.tree;
 
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 
 public class TraderCombinationNode implements Comparable<Object> {
 
@@ -15,19 +15,19 @@ public class TraderCombinationNode implements Comparable<Object> {
 
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         TraderCombinationNode other = (TraderCombinationNode) obj;
-		if (totalMismatch != other.totalMismatch) {
-			return false;
-		}
+        if (totalMismatch != other.totalMismatch) {
+            return false;
+        }
         return true;
     }
 

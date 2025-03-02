@@ -1,7 +1,7 @@
 package com.plushpay.service.banking.au;
 
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.TraderStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFile;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFileFilter;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabDirectEntryIndicator;
@@ -9,7 +9,7 @@ import com.plushpay.service.banking.au.nab.directEntry.codes.NabTransactionCode;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabDetailRecord;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabFileTotalRecord;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.service.trading.trader.TraderService;
+import com.plushpay.service.trader.TraderService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -19,6 +19,8 @@ import java.util.Calendar;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -26,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author tpacker
  */
+@ConditionalOnProperty(value = "com.plushpay.simulation.enabled", havingValue = "true")
+@Component
 public class AudTraderDepositSimulator extends Thread {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -133,7 +137,7 @@ public class AudTraderDepositSimulator extends Thread {
                 amount = traders.get(j).getCurrencyToSell().getValue() / 100; //WATCH ROUNDING!!!!
                 totalCredits = totalCredits + amount; //add it to the total
                 String accountTitle = "Trader Account Title";
-                String lodgementReference = String.valueOf(traders.get(j).getGroup().getGroupid());
+                String lodgementReference = String.valueOf(traders.get(j).getGroup().getId());
                 String userBsb = audBankSimulator.getBsbNumber();
                 String userAccountNumber = audBankSimulator.getAccountNumber();
                 String remitter = traders.get(j).getId() + "";
@@ -155,7 +159,7 @@ public class AudTraderDepositSimulator extends Thread {
                 this.processedTraders.add(traders.get(j).getId());
 
                 this.log.info("Simulating deposit of " + (amount / 100) + " for trader " + remitter
-                    + " in group " + traders.get(j).getGroup().getGroupid());
+                    + " in group " + traders.get(j).getGroup().getId());
             }
             //Write file to bank
             //Create a file

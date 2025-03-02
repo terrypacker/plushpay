@@ -1,15 +1,15 @@
 package com.plushpay.service.banking.us;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFile;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFileFilter;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabDirectEntryIndicator;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabTransactionCode;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabDetailRecord;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabFileTotalRecord;
-import com.plushpay.service.trading.TradeService;
+import com.plushpay.service.trade.TradeService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -196,12 +196,17 @@ public class UsdTraderDepositSimulator extends Thread {
 
     }
 
-
     public void shutDown() {
         //Shut'er down
         this.shutdown = true;
         this.interrupt();
 
+    }
+
+    public void startUp() {
+        //TODO Check thread state before starting
+        this.shutdown = false;
+        this.start();
     }
 
 }

@@ -1,18 +1,17 @@
 package com.plushpay.service.trading.tradeProfitTree;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
-import com.plushpay.service.currency.CurrencyService;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
+import com.plushpay.repository.tradergroup.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
-import com.plushpay.service.trading.TradeService;
+import com.plushpay.service.trade.TradeService;
 import com.plushpay.service.trading.tradeGenerator.TradeEmailGenerator;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.service.trading.trader.TraderHibernation;
-import com.plushpay.repository.trading.trader.TraderStatus;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.service.trader.TraderService;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -33,6 +32,9 @@ public class TradeProfitTreeManager {
 
     private List<Trader> currentSellers;
     private List<Trader> currentBuyers;
+
+    private final PyCurrencyType buyingCurrency;
+    private final PyCurrencyType sellingCurrency;
 
     private volatile boolean shutdown;
 
@@ -59,12 +61,16 @@ public class TradeProfitTreeManager {
     private boolean writeToFile;
     private BufferedWriter paramOutputFile;
 
-    private final CurrencyService currencyService;
     private final TradeService tradeService;
+    private final TraderService traderService;
 
-    public TradeProfitTreeManager(CurrencyService currencyService, TradeService tradeService) {
-        this.currencyService = currencyService;
+    public TradeProfitTreeManager(TradeService tradeService,
+        TraderService traderService, PyCurrencyType buy, PyCurrencyType sell) {
         this.tradeService = tradeService;
+        this.traderService = traderService;
+
+        this.buyingCurrency = buy;
+        this.sellingCurrency = sell;
     }
 
 
@@ -318,11 +324,6 @@ public class TradeProfitTreeManager {
 
         }
 
-        PyCurrencyType buyingCurrency = currencyService.getCurrentCurrencyType(
-            CurrencyCodeEnum.USD);
-        PyCurrencyType sellingCurrency = currencyService.getCurrentCurrencyType(
-            CurrencyCodeEnum.AUD);
-
         PyCurrency buyZero = new PyCurrency(0, buyingCurrency);
         //buyZero.setType(this.buyingCurrency);
         //buyZero.setValue(0);
@@ -347,8 +348,6 @@ public class TradeProfitTreeManager {
         this.currentSellers = new ArrayList<Trader>();
         this.tree = new TradeProfitTree();
         this.tree.put(zeroNode);
-
-        //TODO CLose Hibernate Session and re-open for create trade
 
         while (!this.shutdown) {
 
@@ -376,7 +375,7 @@ public class TradeProfitTreeManager {
                 /*Remove the 0 value trader AND set all buyers status to DEPOSIT*/
                 for (int i = 0; i < best.getBuyers().size(); i++) {
                     //Set all trader status to DEPOSIT, awaiting deposit.
-                    best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT.name());
+                    best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT);
                     if (best.getBuyers().get(i).getCurrencyToBuy().getValue() == 0) {
                         try {
                             best.getBuyers().remove(i);
@@ -394,7 +393,7 @@ public class TradeProfitTreeManager {
 
                 /*Remove the 0 value trader AND set sellers status to DEPOST*/
                 for (int i = 0; i < best.getSellers().size(); i++) {
-                    best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT.name());
+                    best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT);
                     if (best.getSellers().get(i).getCurrencyToBuy().getValue() == 0) {
                         try {
                             best.getSellers().remove(i);
@@ -430,7 +429,7 @@ public class TradeProfitTreeManager {
                         .getCode() +
                         " " + sellerProfit + sellersGroup.getCurrencyToSell().getType().getCode());
 
-                newTrade = tradeService.mergeAndUpdateMembers(newTrade);
+                newTrade = tradeService.save(newTrade).get();
 
                 //WRite an empty line to indicate a trade was made
                 try {
@@ -527,15 +526,6 @@ public class TradeProfitTreeManager {
      */
     private void resetTree() {
 
-        //TODO Fix when we open/close session during tree operation
-        //Session tradeSession = HibernateUtil.getSessionFactory().getCurrentSession();
-        //tradeSession.beginTransaction();
-
-        PyCurrencyType buyingCurrency = currencyService.getCurrentCurrencyType(
-            CurrencyCodeEnum.USD);
-        PyCurrencyType sellingCurrency = currencyService.getCurrentCurrencyType(
-            CurrencyCodeEnum.AUD);
-
         PyCurrency buyZero = new PyCurrency();
         buyZero.setType(buyingCurrency);
         buyZero.setValue(0);
@@ -560,9 +550,6 @@ public class TradeProfitTreeManager {
         this.currentSellers = new ArrayList<Trader>();
         this.tree.resetTree(); //Clear the tree
         this.tree.put(zeroNode);
-
-        //TODO Close session here
-
     }
 
 
@@ -740,22 +727,15 @@ public class TradeProfitTreeManager {
      * @return
      */
     private List<Trader> getNewSellers() {
-        //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < this.currentSellers.size(); i++) {
-            ids.add(this.currentSellers.get(i).getTraderid());
-        }
-        List<Trader> newSellers = th.loadFreeTradersExcept(ids, CurrencyCodeEnum.AUD,
-            CurrencyCodeEnum.USD);
-
+        //Load in all free sellers of this currency Type
+        // TODO and lock them
+        List<Trader> newSellers = traderService.getFreeTradersExcept(CurrencyCodeEnum.AUD,
+            CurrencyCodeEnum.USD, this.currentSellers).toList();
         this.log.debug("Adding " + newSellers.size() + " Sellers.");
-
         this.currentSellers.addAll(newSellers);
-
         return newSellers;
     }
+
 
     /**
      * Collect buyers from the DB that are not already in the tree
@@ -763,20 +743,12 @@ public class TradeProfitTreeManager {
      * @return
      */
     private List<Trader> getNewBuyers() {
-        //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Long> ids = new ArrayList<Long>();
-        for (int i = 0; i < this.currentBuyers.size(); i++) {
-            ids.add(this.currentBuyers.get(i).getTraderid());
-        }
-        List<Trader> newBuyers = th.loadFreeTradersExcept(ids, CurrencyCodeEnum.USD,
-            CurrencyCodeEnum.AUD);
-
+        //Load in all free buyers of this currency Type
+        // TODO and lock them
+        List<Trader> newBuyers = traderService.getFreeTradersExcept(CurrencyCodeEnum.USD,
+            CurrencyCodeEnum.AUD, currentBuyers).toList();
         this.log.debug("Adding " + newBuyers.size() + " Buyers.");
-
         this.currentBuyers.addAll(newBuyers);
-
         return newBuyers;
     }
 

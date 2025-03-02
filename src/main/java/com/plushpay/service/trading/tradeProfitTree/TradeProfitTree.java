@@ -1,7 +1,7 @@
 package com.plushpay.service.trading.tradeProfitTree;
 
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;

@@ -1,8 +1,8 @@
 package com.plushpay.service.banking.au;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFile;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFileFilter;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabDirectEntryIndicator;
@@ -10,7 +10,7 @@ import com.plushpay.service.banking.au.nab.directEntry.codes.NabTransactionCode;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabDetailRecord;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabFileTotalRecord;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.service.trading.TradeService;
+import com.plushpay.service.trade.TradeService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -27,6 +29,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author tpacker
  */
+@ConditionalOnProperty(value = "com.plushpay.simulation.enabled", havingValue = "true")
+@Component
 public class AudTradeDebitManager extends Thread {
 
     private Log log = LogFactory.getLog(getClass());

@@ -1,6 +1,7 @@
-package com.plushpay.repository.trading.trade;
+package com.plushpay.repository.trade;
 
 import com.plushpay.repository.AbstractInMemoryRepository;
+import com.plushpay.repository.LongIdGenerator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class TradeRepository extends AbstractInMemoryRepository<Trade, Long> {
+
+    public TradeRepository() {
+        super(new LongIdGenerator());
+    }
 
     public Stream<Trade> getAllWithStatus(TradeStatus status) {
         return this.rows.stream().filter(t -> t.getStatus() == status);

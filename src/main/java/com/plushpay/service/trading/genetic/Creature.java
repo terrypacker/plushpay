@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Random;
 
 import com.plushpay.service.currency.PyCurrency;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.tradergroup.TraderGroup;
 
 public class Creature implements Comparable<Creature> {
 
@@ -443,9 +443,9 @@ public class Creature implements Comparable<Creature> {
         //If we didn't get any buyers then we need at least one from each parent
         if (newBuyers.size() == 0) {
             newBuyers.add(this.buyers.get(0));
-			if (!newBuyers.contains(thoseBuyers.get(0))) {
-				newBuyers.add(thoseBuyers.get(0));
-			}
+            if (!newBuyers.contains(thoseBuyers.get(0))) {
+                newBuyers.add(thoseBuyers.get(0));
+            }
         }
 
         if (this.sellers.size() > 4) {
@@ -791,40 +791,40 @@ public class Creature implements Comparable<Creature> {
      */
     @Override
     public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
         Creature other = (Creature) obj;
         if (buyers == null) {
-			if (other.buyers != null) {
-				return false;
-			}
+            if (other.buyers != null) {
+                return false;
+            }
         } else if (!buyers.equals(other.buyers)) {
-			return false;
-		}
+            return false;
+        }
         if (buyersCurrencyToBuy == null) {
-			if (other.buyersCurrencyToBuy != null) {
-				return false;
-			}
+            if (other.buyersCurrencyToBuy != null) {
+                return false;
+            }
         } else if (!buyersCurrencyToBuy.equals(other.buyersCurrencyToBuy)) {
-			return false;
-		}
+            return false;
+        }
         if (buyersCurrencyToSell == null) {
-			if (other.buyersCurrencyToSell != null) {
-				return false;
-			}
+            if (other.buyersCurrencyToSell != null) {
+                return false;
+            }
         } else if (!buyersCurrencyToSell.equals(other.buyersCurrencyToSell)) {
-			return false;
-		}
-		if (cost != other.cost) {
-			return false;
-		}
+            return false;
+        }
+        if (cost != other.cost) {
+            return false;
+        }
 /* We don't care about the creatures fate
  * 		if (fate == null) {
 			if (other.fate != null)
@@ -832,37 +832,37 @@ public class Creature implements Comparable<Creature> {
 		} else if (!fate.equals(other.fate))
 			return false;
 */
-		if (Float.floatToIntBits(fitness) != Float
-			.floatToIntBits(other.fitness)) {
-			return false;
-		}
-		if (gain != other.gain) {
-			return false;
-		}
-		if (Float.floatToIntBits(roi) != Float.floatToIntBits(other.roi)) {
-			return false;
-		}
+        if (Float.floatToIntBits(fitness) != Float
+            .floatToIntBits(other.fitness)) {
+            return false;
+        }
+        if (gain != other.gain) {
+            return false;
+        }
+        if (Float.floatToIntBits(roi) != Float.floatToIntBits(other.roi)) {
+            return false;
+        }
         if (sellers == null) {
-			if (other.sellers != null) {
-				return false;
-			}
+            if (other.sellers != null) {
+                return false;
+            }
         } else if (!sellers.equals(other.sellers)) {
-			return false;
-		}
+            return false;
+        }
         if (sellersCurrencyToBuy == null) {
-			if (other.sellersCurrencyToBuy != null) {
-				return false;
-			}
+            if (other.sellersCurrencyToBuy != null) {
+                return false;
+            }
         } else if (!sellersCurrencyToBuy.equals(other.sellersCurrencyToBuy)) {
-			return false;
-		}
+            return false;
+        }
         if (sellersCurrencyToSell == null) {
-			if (other.sellersCurrencyToSell != null) {
-				return false;
-			}
+            if (other.sellersCurrencyToSell != null) {
+                return false;
+            }
         } else if (!sellersCurrencyToSell.equals(other.sellersCurrencyToSell)) {
-			return false;
-		}
+            return false;
+        }
         return true;
     }
 

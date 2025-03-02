@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.plushpay.math.CombinationMath;
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trader.Trader;
 
 public class OptimizedArrayTradeCombinationGenerator {
 

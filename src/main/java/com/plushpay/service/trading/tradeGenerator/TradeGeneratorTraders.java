@@ -3,25 +3,24 @@
  */
 package com.plushpay.service.trading.tradeGenerator;
 
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.service.trader.TraderService;
 import java.util.List;
-
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.service.trading.trader.TraderHibernation;
 
 /**
  * @author tpacker
- *
  */
 public class TradeGeneratorTraders {
 
     private List<Trader> freeTraders;
     private List<Trader> allTraders;
 
-    public TradeGeneratorTraders() {
+    private final TraderService traderService;
 
-        TraderHibernation th = new TraderHibernation();
-        this.freeTraders = th.loadFreeTraders();
-        this.setAllTraders(th.loadAll());
+    public TradeGeneratorTraders(TraderService traderService) {
+        this.traderService = traderService;
+        this.freeTraders = traderService.getFreeTraders().toList();
+        this.allTraders = traderService.getAll().toList();
 
     }
 

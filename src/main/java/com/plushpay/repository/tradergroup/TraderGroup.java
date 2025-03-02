@@ -1,18 +1,19 @@
-package com.plushpay.repository.trading.trader.group;
+package com.plushpay.repository.tradergroup;
 
 // Generated Apr 24, 2010 1:54:05 PM by Hibernate Tools 3.2.5.Beta
 
+import com.plushpay.repository.IdEntity;
+import com.plushpay.repository.trader.Trader;
 import com.plushpay.service.currency.PyCurrency;
-import com.plushpay.repository.trading.trader.Trader;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Group of Traders Buying and Selling the same currency types.
  */
-public class TraderGroup implements java.io.Serializable {
+public class TraderGroup implements IdEntity<Long> {
 
-    private long groupid;
+    private Long id;
     private PyCurrency currencyToSell;
     private PyCurrency currencyToBuy;
     private List<Trader> traders = new ArrayList<Trader>(0);
@@ -27,12 +28,12 @@ public class TraderGroup implements java.io.Serializable {
         this.traders = traders;
     }
 
-    public long getGroupid() {
-        return this.groupid;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setGroupid(long groupid) {
-        this.groupid = groupid;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public PyCurrency getCurrencyToSell() {
@@ -79,15 +80,15 @@ public class TraderGroup implements java.io.Serializable {
     }
 
     public boolean equals(Object other) {
-		if ((this == other)) {
-			return true;
-		}
-		if ((other == null)) {
-			return false;
-		}
-		if (!(other instanceof TraderGroup)) {
-			return false;
-		}
+        if ((this == other)) {
+            return true;
+        }
+        if ((other == null)) {
+            return false;
+        }
+        if (!(other instanceof TraderGroup)) {
+            return false;
+        }
         TraderGroup castOther = (TraderGroup) other;
 
         return ((this.getCurrencyToSell() == castOther.getCurrencyToSell()) || (this
@@ -129,13 +130,13 @@ public class TraderGroup implements java.io.Serializable {
      */
     public TraderGroup(TraderGroup group) {
 
-        this.setGroupid(group.getGroupid());
-		if (group.getCurrencyToBuy() != null) {
-			this.setCurrencyToBuy(new PyCurrency(group.getCurrencyToBuy()));
-		}
-		if (group.getCurrencyToSell() != null) {
-			this.setCurrencyToSell(new PyCurrency(group.getCurrencyToSell()));
-		}
+        this.setId(group.getId());
+        if (group.getCurrencyToBuy() != null) {
+            this.setCurrencyToBuy(new PyCurrency(group.getCurrencyToBuy()));
+        }
+        if (group.getCurrencyToSell() != null) {
+            this.setCurrencyToSell(new PyCurrency(group.getCurrencyToSell()));
+        }
 
     }
     // end of extra code specified in the hbm.xml files

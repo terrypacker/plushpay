@@ -1,10 +1,10 @@
-package com.plushpay.repository.trading.trader;
+package com.plushpay.repository.trader;
 
 // Generated Apr 24, 2010 1:54:05 PM by Hibernate Tools 3.2.5.Beta
 
 import com.plushpay.repository.IdEntity;
 import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroup;
 import com.plushpay.repository.user.User;
 import com.plushpay.service.currency.PyCurrency;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class Trader implements Comparable, IdEntity<Long> {
         return this.id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

@@ -4,49 +4,90 @@ import com.plushpay.service.banking.au.AudBankSimulator;
 import com.plushpay.service.banking.au.AudTradeCreditManager;
 import com.plushpay.service.banking.au.AudTradeDebitManager;
 import com.plushpay.service.banking.au.AudTraderDepositSimulator;
-import com.plushpay.service.currency.rate.RateTestDataCollector;
-import com.plushpay.service.trading.evolution.GeneticTradeManager;
-import com.plushpay.service.trading.tradeProfitTree.TradeProfitTreeManager;
-import com.plushpay.service.trading.traderSimulation.TraderTestDataSimulation;
+import com.plushpay.service.banking.us.UsdBankSimulator;
+import com.plushpay.service.banking.us.UsdTradeCreditManager;
+import com.plushpay.service.banking.us.UsdTradeDebitManager;
+import com.plushpay.service.banking.us.UsdTraderDepositSimulator;
+import com.plushpay.service.trading.evolution.EvolutionTradeManager;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * Simulation Control
- *
+ * <p>
  * TODO Create beans for all these classes
- *
  */
 @ConditionalOnProperty(value = "com.plushpay.simulation.enabled", havingValue = "true")
 @Component
-public class SimulationStartupListener {
+public class SimulationStartupListener extends Thread {
 
-	public SimulationStartupListener() {
-		RateTestDataCollector.getRateTestDataCollector().startUp();
+    private final AudBankSimulator audBankSimulator;
+    private final AudTradeCreditManager audTradeCreditManager;
+    private final AudTradeDebitManager audTradeDebitManager;
+    private final AudTraderDepositSimulator audTraderDepositSimulator;
 
-		AudBankSimulator.getAudBankSimulator().startUp();
+    private final UsdBankSimulator usdBankSimulator;
+    private final UsdTradeCreditManager usdTradeCreditManager;
+    private final UsdTradeDebitManager usdTradeDebitManager;
+    private final UsdTraderDepositSimulator usdTraderDepositSimulator;
 
-		AudTradeCreditManager.getAudTradeCreditManager().startUp();
+    private final EvolutionTradeManager tradeManager;
 
-		AudTradeDebitManager.getAudTradeDebitManager().startUp();
+    public SimulationStartupListener(AudBankSimulator audBankSimulator,
+        AudTradeCreditManager audTradeCreditManager,
+        AudTradeDebitManager audTradeDebitManager,
+        AudTraderDepositSimulator audTraderDepositSimulator,
+        UsdBankSimulator usdBankSimulator,
+        UsdTradeCreditManager usdTradeCreditManager,
+        UsdTradeDebitManager usdTradeDebitManager,
+        UsdTraderDepositSimulator usdTraderDepositSimulator,
+        EvolutionTradeManager tradeManager) {
 
-		AudTraderDepositSimulator.getAudTraderDeptositSimulator().startUp();
+        this.audBankSimulator = audBankSimulator;
+        this.audTradeCreditManager = audTradeCreditManager;
+        this.audTradeDebitManager = audTradeDebitManager;
+        this.audTraderDepositSimulator = audTraderDepositSimulator;
 
-		//TradeProfitTreeManager.getTradeProfitTreeManager().startUp();
-		GeneticTradeManager.getGeneticTradeManager().startUp();
+        this.usdBankSimulator = usdBankSimulator;
+        this.usdTradeCreditManager = usdTradeCreditManager;
+        this.usdTradeDebitManager = usdTradeDebitManager;
+        this.usdTraderDepositSimulator = usdTraderDepositSimulator;
 
-		//TraderTestDataSimulation.getTraderTestDataSimulation().startUp();
-	}
+        this.tradeManager = tradeManager;
 
-	@PreDestroy
-	public void destroy() {
-		RateTestDataCollector.getRateTestDataCollector().shutDown();
-		AudBankSimulator.getAudBankSimulator().shutDown();
-		AudTradeCreditManager.getAudTradeCreditManager().shutDown();
-		AudTradeDebitManager.getAudTradeDebitManager().shutDown();
-		AudTraderDepositSimulator.getAudTraderDeptositSimulator().shutDown();
-		TradeProfitTreeManager.getTradeProfitTreeManager().shutDown();
-		TraderTestDataSimulation.getTraderTestDataSimulation().shutDown();
-	}
+    }
+
+    @PostConstruct
+    public void init() {
+        audBankSimulator.startUp();
+        audTradeCreditManager.startUp();
+        audTradeDebitManager.startUp();
+        audTraderDepositSimulator.startUp();
+
+        usdBankSimulator.startUp();
+        usdTradeCreditManager.startUp();
+        usdTradeDebitManager.startUp();
+        usdTraderDepositSimulator.startUp();
+
+        //TradeProfitTreeManager.getTradeProfitTreeManager().startUp();
+        tradeManager.startUp();
+
+        //TraderTestDataSimulation.getTraderTestDataSimulation().startUp();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        //RateTestDataCollector.getRateTestDataCollector().shutDown();
+        audBankSimulator.shutDown();
+        audTradeCreditManager.shutDown();
+        audTradeDebitManager.shutDown();
+        audTraderDepositSimulator.shutDown();
+
+        usdBankSimulator.shutDown();
+        usdTradeCreditManager.shutDown();
+        usdTradeDebitManager.shutDown();
+        usdTraderDepositSimulator.shutDown();
+    }
 }

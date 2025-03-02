@@ -1,16 +1,15 @@
 package com.plushpay.service.trading.traderSimulation;
 
 import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.TraderStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.repository.user.User;
 import com.plushpay.service.currency.CurrencyService;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.service.currency.rate.RateTestDataCollector;
 import com.plushpay.service.currency.type.PyCurrencyType;
-import com.plushpay.service.trading.trader.TraderService;
+import com.plushpay.service.trader.TraderService;
 import com.plushpay.service.user.UserService;
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +34,7 @@ public class TraderTestDataSimulation extends Thread {
     private final TraderService traderService;
 
 
-    private TraderTestDataSimulation(UserService userService, CurrencyService currencyService,
+    public TraderTestDataSimulation(UserService userService, CurrencyService currencyService,
         TraderService traderService) {
         super("Trader Test Data Simulation");
         this.pollPeriod = 5000;
@@ -48,7 +47,7 @@ public class TraderTestDataSimulation extends Thread {
 
     public void run() {
 
-        URL url = RateTestDataCollector.class
+        URL url = getClass()
             .getResource("/com/plushpay/testing/data/testTradeAmounts2.csv");
         try {
             this.data.loadData(new File(url.getFile()));
@@ -200,7 +199,7 @@ public class TraderTestDataSimulation extends Thread {
 
                 // TODO Upgrade ENUM Types using com.payyourself.enumUserType
                 trader = new Trader(null, user, toBuy.get(i), currencyToSell,
-                    TraderStatus.CONFIRMED.name(), benies);
+                    TraderStatus.CONFIRMED, benies);
                 traders.add(trader); // Insert him to be persisted
                 // TODO Upgrade ENUM Types using com.payyourself.enumUserType
             } else if (toBuy.get(i).getType().getCode() == CurrencyCodeEnum.AUD) {
@@ -229,7 +228,7 @@ public class TraderTestDataSimulation extends Thread {
                 }
 
                 trader = new Trader(null, user, toBuy.get(i), currencyToSell,
-                    TraderStatus.CONFIRMED.name(), benies);
+                    TraderStatus.CONFIRMED, benies);
                 traders.add(trader); // Insert him to be persisted
 
             }

@@ -3,14 +3,14 @@
  */
 package com.plushpay.service.trading.tradeGenerator;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeRepository;
-import com.plushpay.repository.trading.trade.TradeStatus;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
-import com.plushpay.service.trading.trader.TraderHibernation;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.service.trade.TradeService;
+import com.plushpay.service.trader.TraderService;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -30,16 +30,18 @@ public class TradeGeneratorDepositFundsTrades {
     private PyCurrency totalSellerBuyMismatch;
 
     private boolean tradeLoaded;
+    private final TradeService tradeService;
+    private final TraderService traderService;
 
-    private final TradeRepository tradeRepository;
-
-    public TradeGeneratorDepositFundsTrades(TradeRepository tradeRepository) {
-        this.tradeRepository = tradeRepository;
+    public TradeGeneratorDepositFundsTrades(TradeService tradeService,
+        TraderService traderService) {
+        this.tradeService = tradeService;
+        this.traderService = traderService;
     }
 
     public void init() {
 
-        this.setTrades(tradeRepository.getAllWithStatus(TradeStatus.DEPOSIT).toList());
+        this.setTrades(tradeService.getAllWithStatus(TradeStatus.DEPOSIT).toList());
 
         long totalBuyerBuy = 0, totalBuyerSell = 0, totalSellerBuy = 0, totalSellerSell = 0;
 
@@ -86,15 +88,11 @@ public class TradeGeneratorDepositFundsTrades {
      * @throws Exception
      */
     public void collectData() throws Exception {
-
-        TraderHibernation th = new TraderHibernation();
         this.buyers = new TraderGroupUtil(
-            th.loadTradersWithGroupId(this.chosenTrade.getBuyerGroup().getGroupid()));
+            traderService.getWithGroupId(this.chosenTrade.getBuyerGroup().getId()).toList());
         this.sellers = new TraderGroupUtil(
-            th.loadTradersWithGroupId(this.chosenTrade.getSellerGroup().getGroupid()));
-
+            traderService.getWithGroupId(this.chosenTrade.getSellerGroup().getId()).toList());
         this.tradeLoaded = true;
-
     }
 
 

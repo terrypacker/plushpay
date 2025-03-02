@@ -73,6 +73,12 @@ public class UsdBankSimulator extends Thread {
         this.interrupt(); //Interrupt execution
     }
 
+    public void startUp() {
+        //TODO Check thread state before starting
+        this.shutdown = false;
+        this.start();
+    }
+
 
     public void run() {
 

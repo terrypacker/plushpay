@@ -3,12 +3,12 @@ package com.plushpay;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.TraderStatus;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
+import com.plushpay.repository.tradergroup.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import com.plushpay.repository.user.User;
 import com.plushpay.service.banking.au.AudBankSimulator;
 import com.plushpay.service.banking.au.AudTradeCreditManager;
@@ -376,20 +376,20 @@ public class TradeTest {
         String selling = this.conv.getAsString(null, null, audBuyerGroup.getCurrencyToSell());
 
         this.log.info(
-            "Created AUD Buying Group: " + audBuyerGroup.getGroupid() + " Buying " + buying
+            "Created AUD Buying Group: " + audBuyerGroup.getId() + " Buying " + buying
                 + " Selling " + selling);
 
         buying = this.conv.getAsString(null, null, usdBuyerGroup.getCurrencyToBuy());
         selling = this.conv.getAsString(null, null, usdBuyerGroup.getCurrencyToSell());
         this.log.info(
-            "Created USD Buying Group: " + usdBuyerGroup.getGroupid() + " Buying " + buying
+            "Created USD Buying Group: " + usdBuyerGroup.getId() + " Buying " + buying
                 + " Selling " + selling);
 
         //Load traders again and check their group IDs
-        List<Trader> traders = th.loadTradersWithGroupId(audBuyerGroup.getGroupid());
+        List<Trader> traders = th.loadTradersWithGroupId(audBuyerGroup.getId());
         assertNotNull(traders);
 
-        traders = th.loadTradersWithGroupId(usdBuyerGroup.getGroupid());
+        traders = th.loadTradersWithGroupId(usdBuyerGroup.getId());
 
         Trade newTrade = new Trade(usdBuyerGroup, audBuyerGroup, Calendar.getInstance(),
             TradeStatus.DEPOSIT.name());

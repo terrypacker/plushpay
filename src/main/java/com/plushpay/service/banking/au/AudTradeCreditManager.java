@@ -1,15 +1,15 @@
 package com.plushpay.service.banking.au;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.repository.trading.trader.TraderStatus;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.service.banking.au.nab.nai.NaiFileFilter;
 import com.plushpay.service.banking.au.nab.nai.NaiFileParser;
 import com.plushpay.service.banking.au.nab.nai.records.NaiTransactionDetail;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
-import com.plushpay.service.trading.TradeService;
-import com.plushpay.service.trading.trader.TraderService;
+import com.plushpay.service.trade.TradeService;
+import com.plushpay.service.trader.TraderService;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -31,6 +33,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author tpacker
  */
+@ConditionalOnProperty(value = "com.plushpay.simulation.enabled", havingValue = "true")
+@Component
 public class AudTradeCreditManager extends Thread {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -338,7 +342,7 @@ public class AudTradeCreditManager extends Thread {
                             " as Finalized for deposit of " +
                             (details.get(j).getAmount() / 100));
                         //If the trader ID == the reference number (for now)
-                        traders.get(i).setStatus(TraderStatus.FINALIZED.name());
+                        traders.get(i).setStatus(TraderStatus.FINALIZED);
                         traderService.save(traders.get(i)); //Update in DB.
                     }
                 }

@@ -1,6 +1,6 @@
-package com.plushpay.repository.trading.trader.group;
+package com.plushpay.repository.tradergroup;
 
-import com.plushpay.repository.trading.trader.Trader;
+import com.plushpay.repository.trader.Trader;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.type.PyCurrencyType;
 import java.util.ArrayList;

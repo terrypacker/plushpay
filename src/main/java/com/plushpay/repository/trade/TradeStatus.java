@@ -1,4 +1,4 @@
-package com.plushpay.repository.trading.trade;
+package com.plushpay.repository.trade;
 
 public enum TradeStatus {
 

@@ -1,6 +1,6 @@
 package com.plushpay.service.trading.tradeGenerator;
 
-import com.plushpay.repository.trading.trade.Trade;
+import com.plushpay.repository.trade.Trade;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

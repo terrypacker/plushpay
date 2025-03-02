@@ -1,8 +1,8 @@
-package com.plushpay.service.trading;
+package com.plushpay.service.trade;
 
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeRepository;
-import com.plushpay.repository.trading.trade.TradeStatus;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeRepository;
+import com.plushpay.repository.trade.TradeStatus;
 import com.plushpay.service.AbstractPlushPayService;
 import java.util.List;
 import java.util.stream.Stream;

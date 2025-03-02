@@ -1,4 +1,4 @@
-package com.plushpay.repository.trading.chain;
+package com.plushpay.repository.tradechain;
 
 // Generated Apr 24, 2010 1:54:05 PM by Hibernate Tools 3.2.5.Beta
 

@@ -1,22 +1,18 @@
-package com.plushpay.service.trading.tradeTree;
+package com.plushpay.service.trading.tree;
 
-import com.plushpay.currency.type.PyCurrencyTypeHibernation;
-import com.plushpay.log.LogfileFactory;
-import com.plushpay.persistence.HibernateUtil;
-import com.plushpay.repository.trading.trade.Trade;
-import com.plushpay.repository.trading.trade.TradeStatus;
+import com.plushpay.repository.trade.Trade;
+import com.plushpay.repository.trade.TradeStatus;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
+import com.plushpay.repository.tradergroup.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import com.plushpay.service.currency.PyCurrency;
-import com.plushpay.service.currency.PyCurrencyUtil;
+import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
-import com.plushpay.service.trading.trade.TradeHibernation;
+import com.plushpay.service.trade.TradeService;
+import com.plushpay.service.trader.TraderService;
+import com.plushpay.service.tradergroup.TraderGroupService;
 import com.plushpay.service.trading.tradeGenerator.TradeEmailGenerator;
-import com.plushpay.repository.trading.trader.Trader;
-import com.plushpay.service.trading.trader.TraderHibernation;
-import com.plushpay.repository.trading.trader.TraderStatus;
-import com.plushpay.repository.trading.trader.group.TraderGroup;
-import com.plushpay.service.trading.trader.group.TraderGroupHibernation;
-import com.plushpay.repository.trading.trader.group.TraderGroupUtil;
-import com.plushpay.userManagement.user.User;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,94 +21,58 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public class TraderCombinationRedBlackTreeManager implements ServletContextListener, Runnable {
+public class TraderCombinationRedBlackTreeManager implements Runnable {
 
     private static final boolean RUNNING = false; //Generate Trades?
-
-
     private static final String CSV_HEADER = "numBuyers,numSellers,bestMismatch,treeSize,computationTimeNs,computationTimeMs,computationTimeS,cropAbove,trimWithin,adjustmentFactor,maxComputationtime,maxCropAbove,minCropAbove,cropAboveIncrement,cropAboveDecrement,maxTrimWithin,minTrimWithin,trimWithinIncrement,trimWithinDecrement\n";
 
-
-    private Logger log;
-
+    private Log log = LogFactory.getLog(getClass());
 
     private TraderCombinationRedBlackTree tree;
 
     private List<Trader> currentSellers;
     private List<Trader> currentBuyers;
 
-    private PyCurrencyType buyingCurrency;
-    private PyCurrencyType sellingCurrency;
+    private final PyCurrencyType buyingCurrency;
+    private final PyCurrencyType sellingCurrency;
 
     private boolean shutdown;
-
     private double trimWithin;
-
     private double cropAbove; //Crop any node on tree with mismatch in this top % range.
-
-
     private long maxMismatchAllowed;
-
-
     private long maxComputationTime;
-
-
     private double adjustableTrimWithin;
-
-
     private double adjustableCropAbove;
-
-
     private boolean attemptedMatch;
-
-
     private double minTrimWithin;
-
-
     private double maxTrimWithin;
-
-
     private double maxCropAbove;
-
-
     private double trimWithinIncrement;
-
-
     private double cropAboveIncrement;
-
-
     private double trimWithinDecrement;
-
-
     private double minCropAbove;
-
-
     private double cropAboveDecrement;
 
 
     //For logging param data to CSV
     private boolean writeToFile;
     private BufferedWriter paramOutputFile;
-
-
     private int sameBestCtr;
-
-
     private long lastBest;
 
+    private final TradeService tradeService;
+    private final TraderService traderService;
+    private final TraderGroupService traderGroupService;
 
-    /**
-     * @param buy  - Currency the buyers are buying
-     * @param sell - Currency the sellers are selling
-     */
-    public TraderCombinationRedBlackTreeManager(PyCurrencyType buy, PyCurrencyType sell) {
-
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
+    public TraderCombinationRedBlackTreeManager(TradeService tradeService,
+        TraderService traderService, TraderGroupService traderGroupService, PyCurrencyType buy,
+        PyCurrencyType sell) {
+        this.tradeService = tradeService;
+        this.traderService = traderService;
+        this.traderGroupService = traderGroupService;
 
         this.buyingCurrency = buy;
         this.sellingCurrency = sell;
@@ -120,12 +80,10 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
         PyCurrency buyZero = new PyCurrency();
         buyZero.setType(buy);
         buyZero.setValue(0);
-        buyZero.setBaseValue(0);
 
         PyCurrency sellZero = new PyCurrency();
         sellZero.setType(sell);
         sellZero.setValue(0);
-        sellZero.setBaseValue(0);
 
         Trader zeroBuyer = new Trader();
         zeroBuyer.setCurrencyToBuy(buyZero);
@@ -140,25 +98,6 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
         TraderCombinationNode zeroNode = new TraderCombinationNode(zeroBuyers, zeroSellers);
 
         this.tree = new TraderCombinationRedBlackTree();
-
-    }
-
-    /**
-     * @param buy  - Currency the buyers are buying
-     * @param sell - Currency the sellers are selling
-     */
-    public TraderCombinationRedBlackTreeManager() {
-
-    }
-
-    /**
-     * Insert a new buyer AND seller, might as well do 2 because we can do 2 as fast as 1.
-     *
-     * @param newBuyer
-     * @param newSeller
-     * @throws Exception
-     */
-    public void insertTraders(Trader newBuyer, Trader newSeller) throws Exception {
 
     }
 
@@ -286,7 +225,8 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
     /**
      * Not currently cropping at each insert.
      *
-     * @param sellers
+     * @param buyer
+     * @param cropAbove
      * @throws Exception
      */
     public void insertBuyer(Trader buyer, double cropAbove) throws Exception {
@@ -309,12 +249,12 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
             "Best Group: " + best.getTotalMismatchInDollars() + " with " + (best.getBuyers().size()
                 + best.getSellers().size()) + " members.");
 
-
     }
 
 
     /**
-     * @param sellers
+     * @param seller
+     * @param cropAbove
      * @throws Exception
      */
     public void insertSeller(Trader seller, double cropAbove) throws Exception {
@@ -335,8 +275,6 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
         this.log.info(
             "Best Group: " + best.getTotalMismatchInDollars() + " with " + (best.getBuyers().size()
                 + best.getSellers().size()) + " members.");
-
-
     }
 
 
@@ -397,23 +335,13 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
 
         }
 
-        HibernateUtil.getSessionFactory().getCurrentSession().beginTransaction();
-
-        PyCurrencyTypeHibernation pyctch = new PyCurrencyTypeHibernation();
-        List<PyCurrencyType> allTypes = pyctch.loadAllTypes();
-
-        this.buyingCurrency = allTypes.get(1);
-        this.sellingCurrency = allTypes.get(0);
-
         PyCurrency buyZero = new PyCurrency();
         buyZero.setType(this.buyingCurrency);
         buyZero.setValue(0);
-        buyZero.setBaseValue(0);
 
         PyCurrency sellZero = new PyCurrency();
         sellZero.setType(this.sellingCurrency);
         sellZero.setValue(0);
-        sellZero.setBaseValue(0);
 
         Trader zeroBuyer = new Trader();
         zeroBuyer.setCurrencyToBuy(buyZero);
@@ -471,23 +399,19 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
                     //link.setBuyerBuyCurrencyMismatch(Math.abs(best.getBuyers().getCurrencyToBuy().getValue()-best.getSellers().getCurrencyToSell().getValue()));
                     //link.setBuyerSellCurrencyMismatch(Math.abs(best.getBuyers().getCurrencyToSell().getValue()-best.getSellers().getCurrencyToBuy().getValue()));
 
-                    TraderGroupHibernation tgh = new TraderGroupHibernation();
-
                     TraderGroup buyersGroup = new TraderGroup();
                     buyersGroup.setCurrencyToBuy(best.getBuyers().getCurrencyToBuy());
                     buyersGroup.setCurrencyToSell(best.getBuyers().getCurrencyToSell());
-                    buyersGroup = tgh.merge(buyersGroup);
+                    buyersGroup = traderGroupService.save(buyersGroup).get();
 
                     /* Debug */
                     //link.setBuyers(buyersGroup);
-
-                    TraderHibernation th = new TraderHibernation();
 
                     /*Remove the 0 value trader AND set status to DEPOSIT*/
 
                     for (int i = 0; i < best.getBuyers().size(); i++) {
                         //Set all trader status to DEPOSIT, awaiting deposit.
-                        best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT.toString());
+                        best.getBuyers().get(i).setStatus(TraderStatus.DEPOSIT);
                         if (best.getBuyers().get(i).getCurrencyToBuy().getValue() == 0) {
                             try {
                                 best.getBuyers().remove(i);
@@ -502,18 +426,17 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
                     /*Persist the buyers with the new groupID */
                     for (int i = 0; i < best.getBuyers().size(); i++) {
                         best.getBuyers().get(i).setGroup(buyersGroup);
-                        th.merge(best.getBuyers().get(i));
-
+                        traderService.save(best.getBuyers().get(i));
                     }
 
                     TraderGroup sellersGroup = new TraderGroup();
                     sellersGroup.setCurrencyToBuy(best.getSellers().getCurrencyToBuy());
                     sellersGroup.setCurrencyToSell(best.getSellers().getCurrencyToSell());
-                    sellersGroup = tgh.merge(sellersGroup);
+                    sellersGroup = traderGroupService.save(sellersGroup).get();
 
                     /*Remove the 0 value trader AND set status to DEPOST*/
                     for (int i = 0; i < best.getSellers().size(); i++) {
-                        best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT.toString());
+                        best.getSellers().get(i).setStatus(TraderStatus.DEPOSIT);
                         if (best.getSellers().get(i).getCurrencyToBuy().getValue() == 0) {
                             try {
                                 best.getSellers().remove(i);
@@ -528,8 +451,7 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
                     /*Persist the sellers with the new groupID */
                     for (int i = 0; i < best.getSellers().size(); i++) {
                         best.getSellers().get(i).setGroup(sellersGroup);
-                        th.merge(best.getSellers().get(i));
-
+                        traderService.save(best.getSellers().get(i));
                     }
 
                     /*Create Trade In DB*/
@@ -537,11 +459,10 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
                     newTrade.setBuyerGroup(buyersGroup);
                     newTrade.setSellerGroup(sellersGroup);
                     newTrade.setDateCreated(Calendar.getInstance());
-                    newTrade.setStatus(TradeStatus.DEPOSIT.toString()); //Set the trade status
+                    newTrade.setStatus(TradeStatus.DEPOSIT); //Set the trade status
                     //Should set the expiry date too
 
-                    TradeHibernation trh = new TradeHibernation();
-                    newTrade = trh.merge(newTrade);
+                    newTrade = tradeService.save(newTrade).get();
 
                     //Notify the memebers of this trade that they need to put thier funds into the Bank
                     this.log.info("Sending Trade Emails");
@@ -628,12 +549,10 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
         PyCurrency buyZero = new PyCurrency();
         buyZero.setType(this.buyingCurrency);
         buyZero.setValue(0);
-        buyZero.setBaseValue(0);
 
         PyCurrency sellZero = new PyCurrency();
         sellZero.setType(this.sellingCurrency);
         sellZero.setValue(0);
-        sellZero.setBaseValue(0);
 
         Trader zeroBuyer = new Trader();
         zeroBuyer.setCurrencyToBuy(buyZero);
@@ -854,20 +773,12 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
      * @return
      */
     private List<Trader> getNewSellers() {
-        //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Integer> ids = new ArrayList<Integer>();
-        for (int i = 0; i < this.currentSellers.size(); i++) {
-            ids.add(this.currentSellers.get(i).getTraderid());
-        }
-        List<Trader> newSellers = th.loadFreeTradersExcept(ids, this.sellingCurrency,
-            this.buyingCurrency);
-
-        this.log.info("Adding " + newSellers.size() + " Sellers.");
-
+        //Load in all free sellers of this currency Type
+        // TODO and lock them
+        List<Trader> newSellers = traderService.getFreeTradersExcept(CurrencyCodeEnum.AUD,
+            CurrencyCodeEnum.USD, this.currentSellers).toList();
+        this.log.debug("Adding " + newSellers.size() + " Sellers.");
         this.currentSellers.addAll(newSellers);
-
         return newSellers;
     }
 
@@ -877,262 +788,13 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
      * @return
      */
     private List<Trader> getNewBuyers() {
-        //Load in all free sellers of this currency Type and lock them
-        TraderHibernation th = new TraderHibernation();
-
-        List<Integer> ids = new ArrayList<Integer>();
-        for (int i = 0; i < this.currentBuyers.size(); i++) {
-            ids.add(this.currentBuyers.get(i).getTraderid());
-        }
-        List<Trader> newBuyers = th.loadFreeTradersExcept(ids, this.buyingCurrency,
-            this.sellingCurrency);
-
-        this.log.info("Adding " + newBuyers.size() + " Buyers.");
-
+        //Load in all free buyers of this currency Type
+        // TODO and lock them
+        List<Trader> newBuyers = traderService.getFreeTradersExcept(CurrencyCodeEnum.USD,
+            CurrencyCodeEnum.AUD, currentBuyers).toList();
+        this.log.debug("Adding " + newBuyers.size() + " Buyers.");
         this.currentBuyers.addAll(newBuyers);
-
         return newBuyers;
-    }
-
-
-    /**
-     * Shutdown of matcher
-     */
-    public void contextDestroyed(ServletContextEvent arg0) {
-
-        //Should probably shutdown the thread via thread.interrupt()
-        this.shutdown = true;
-    }
-
-
-    /**
-     * Startup of matcher
-     */
-    public void contextInitialized(ServletContextEvent arg0) {
-
-        this.log = LogfileFactory.getHTMLLogger(Level.ALL, this.getClass());
-        this.log.info("Starting Trade Tree Thread.");
-
-        if (!TraderCombinationRedBlackTreeManager.RUNNING) {
-            return;
-        }
-
-        this.shutdown = false;
-
-
-
-        /*Start the thread*/
-        Thread newThread = new Thread(this);
-        newThread.setName("Trade Tree Manager");
-        newThread.start();
-
-    }
-
-    /**
-     * Test simulation
-     */
-    public void test() {
-
-        String usdCode = "USD";
-        long usdRateToBase = 10000;
-        String usdSymbol = "$";
-        PyCurrencyType usd = new PyCurrencyType(usdCode, usdRateToBase, usdSymbol);
-
-        String audCode = "AUD";
-        long audRateToBase = 10000;
-        String audSymbol = "$";
-        PyCurrencyType aud = new PyCurrencyType(audCode, audRateToBase, audSymbol);
-
-        /*Create the util */
-        PyCurrencyUtil audUtil = new PyCurrencyUtil(aud);
-        PyCurrencyUtil usdUtil = new PyCurrencyUtil(usd);
-
-        /* Setup Group 1 To Buy AUD and Sell USD*/
-
-        /* Fill group 1 */
-        TraderGroupUtil buyerUtil = new TraderGroupUtil(aud, usd);
-        User buyerUser = new User("tpacker", "Terry", "Packer", "shithead",
-            "tpacker@terrypacker.com");
-        List<Trader> buyers = new ArrayList<Trader>();
-
-
-        /* Generate a The buyer values */
-        PyCurrency toBuy = audUtil.toPyCurrencyFromValue(104);
-        PyCurrency toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        Trader newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = audUtil.toPyCurrencyFromValue(102);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = audUtil.toPyCurrencyFromValue(201);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = audUtil.toPyCurrencyFromValue(101);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-
-
-
-        /* Setup group 2 To Buy USD and Sell AUD */
-        TraderGroupUtil sellerUtil = new TraderGroupUtil(usd, aud);
-        List<Trader> sellers = new ArrayList<Trader>();
-        User sellerUser = new User("jallemann", "Jeanne", "Allemann", "shithead",
-            "jeanneallemann@hotmail.com");
-
-        toBuy = usdUtil.toPyCurrencyFromValue(101);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = usdUtil.toPyCurrencyFromValue(102);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = usdUtil.toPyCurrencyFromValue(201);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        toBuy = usdUtil.toPyCurrencyFromValue(101);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
-        try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        this.trimWithin = .000000001f;
-
-        this.buyingCurrency = aud;
-        this.sellingCurrency = usd;
-
-        PyCurrency buyZero = new PyCurrency();
-        buyZero.setType(this.buyingCurrency);
-        buyZero.setValue(0);
-        buyZero.setBaseValue(0);
-
-        PyCurrency sellZero = new PyCurrency();
-        sellZero.setType(this.sellingCurrency);
-        sellZero.setValue(0);
-        sellZero.setBaseValue(0);
-
-        Trader zeroBuyer = new Trader();
-        zeroBuyer.setCurrencyToBuy(buyZero);
-        zeroBuyer.setCurrencyToSell(sellZero);
-
-        Trader zeroSeller = new Trader();
-        zeroSeller.setCurrencyToBuy(sellZero);
-        zeroSeller.setCurrencyToSell(buyZero);
-
-        TraderGroupUtil zeroBuyers = new TraderGroupUtil(zeroBuyer);
-        TraderGroupUtil zeroSellers = new TraderGroupUtil(zeroSeller);
-        TraderCombinationNode zeroNode = new TraderCombinationNode(zeroBuyers, zeroSellers);
-
-        this.log = Logger.getLogger(this.getClass());
-        this.log.info("Starting Trade Tree Thread.");
-
-        this.currentBuyers = new ArrayList<Trader>();
-        this.currentSellers = new ArrayList<Trader>();
-        this.tree = new TraderCombinationRedBlackTree();//new TraderCombinationsTree(zeroNode);
-        this.tree.put(0, zeroNode);
-
-        try {
-            this.insertBuyers(buyers);
-            this.insertSellers(sellers);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        this.tree.printKeys();
-
-
-    }
-
-    /**
-     * @param args
-     * @throws IOException
-     */
-    public static void main(String[] args) throws IOException {
-
-        try {
-            TraderCombinationRedBlackTreeManager treeMan = new TraderCombinationRedBlackTreeManager();
-            treeMan.test();
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
     }
 
     /**
@@ -1146,7 +808,7 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
             this.log.info("Inserting Seller " + i + ", Tree size: " + this.tree.size());
             long now = Calendar.getInstance().getTimeInMillis();
             try {
-                this.tree.insertSeller(sellers.get(i), this.cropAbove / this.tree.size());
+                this.tree.insertSeller(sellers.get(i), (float) (this.cropAbove / this.tree.size()));
                 //this.tree.insertSeller(sellers.get(i), this.delta/this.tree.size(), this.cropAbove/this.tree.size());
                 //this.insertSeller(sellers.get(i),this.maxGroupSize);
                 //this.insertSeller(sellers.get(i));
@@ -1298,7 +960,7 @@ public class TraderCombinationRedBlackTreeManager implements ServletContextListe
                 stuff++;
             }
             try {
-                this.tree.insertBuyer(buyers.get(i), this.cropAbove / this.tree.size());
+                this.tree.insertBuyer(buyers.get(i), (float) (this.cropAbove / this.tree.size()));
                 //this.tree.insertBuyer(buyers.get(i), this.delta/this.tree.size(), this.cropAbove/this.tree.size());
                 //this.insertBuyer(buyers.get(i),this.maxGroupSize);
                 //this.insertBuyer(buyers.get(i));
