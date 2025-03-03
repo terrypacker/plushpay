@@ -2,6 +2,7 @@ package com.plushpay;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.Fail.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.plushpay.repository.trade.Trade;
 import com.plushpay.repository.trade.TradeStatus;
@@ -14,10 +15,12 @@ import com.plushpay.service.banking.au.AudBankSimulator;
 import com.plushpay.service.banking.au.AudTradeCreditManager;
 import com.plushpay.service.banking.au.AudTradeDebitManager;
 import com.plushpay.service.banking.au.AudTraderDepositSimulator;
+import com.plushpay.service.currency.CurrencyTypeService;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
+import com.plushpay.service.trader.TraderService;
 import com.plushpay.service.trading.trader.TraderHibernation;
 import com.plushpay.service.trading.trader.group.TraderGroupHibernation;
 import com.plushpay.service.trading.traderSimulation.TradersSimulation;
@@ -26,6 +29,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +50,12 @@ public class TradeTest {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private CurrencyTypeService currencyTypeService;
+    @Autowired
+    private TraderService traderService;
+    @Autowired
+    private TradersSimulation tradersSimulation;
 
     public TradeTest() {
 
@@ -57,14 +67,6 @@ public class TradeTest {
         List<PyCurrencyType> audRates = new ArrayList<PyCurrencyType>();
         audRates.add(new PyCurrencyType(CurrencyCodeEnum.AUD, 9200L, ZonedDateTime.now()));
         audRates.add(new PyCurrencyType(CurrencyCodeEnum.AUD, 9200L, ZonedDateTime.now()));
-        //audRates.add(9220L);
-        //audRates.add(9230L);
-        //audRates.add(9240L);
-        //	audRates.add(9250L);
-        //audRates.add(9260L);
-        //audRates.add(9270L);
-        //audRates.add(9280L);
-        //audRates.add(9290L);
 
         try {
             this.audToBuy = this.generateAudCurrency(audAmounts, audRates);
@@ -99,10 +101,9 @@ public class TradeTest {
         assertThat(users).isNotNull();
 
         //Create a Traders Simulation to help generate Traders
-        TradersSimulation traderSim = TradersSimulation.getTradersSimulation();
         List<Trader> traders = null;
         try {
-            traders = traderSim.createNewTraders(users.get(0), toBuy);
+            traders = tradersSimulation.createNewTraders(users.get(0), toBuy);
         } catch (Exception e) {
             this.log.error("Unable to generate AUD Buyers", e);
             fail(e.getMessage());
@@ -145,109 +146,58 @@ public class TradeTest {
         return auds;
     }
 
-
-    public void setUp() {
-        this.sesh = HibernateUtil.getSessionFactory().getCurrentSession();
-        this.sesh.beginTransaction();
-    }
-
-    public void tearDown() {
-        this.sesh.flush();
-        this.sesh.disconnect();
-        this.sesh.close();
-    }
-
-
     public void testInsertRate() {
 
         this.log.info("Running Test Insert Rate");
 
-        //Must have a session
-        assertNotNull(this.sesh);
-
-        PyCurrencyTypeHibernation pycth = new PyCurrencyTypeHibernation();
-
         //Load the Types from the DB
-
-        PyCurrencyType aud = pycth.getCurrentAud();
-        PyCurrencyType usd = pycth.getCurrentUsd();
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         //Load the rates from a file
         //TODO load rates from test file
 
-        this.log.info("Setting " + aud.getCode() + " to " + 9200);
-        aud.setRateToBase(9200); //
+        this.log.info("Setting " + audType.getCode() + " to " + 9200);
+        audType.setRateToBase(9200); //
 
-        this.log.info("Setting " + usd.getCode() + " to " + 10000);
-        usd.setRateToBase(10000); //
+        this.log.info("Setting " + usdType.getCode() + " to " + 10000);
+        usdType.setRateToBase(10000); //
 
         //Persist them to the DB
-        pycth.persist(aud);
-        pycth.persist(usd);
-
-
+        currencyTypeService.save(usdType);
+        currencyTypeService.save(audType);
     }
 
     public void testCurrencyUtil() {
-
-        this.log.info("Running Test Currency Util");
-
         //Get the types from the DB
-        PyCurrencyTypeHibernation pycth = new PyCurrencyTypeHibernation();
-
-        //Load the Types from the DB
-        PyCurrencyType audType = pycth.getCurrentAud();
-        PyCurrencyType usdType = pycth.getCurrentUsd();
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         //First test that it works for 1 dollar
         //long audBase = (this.types.get(1).getRateToBase() *this.types.get(1).getRateToBase())/this.types.get(0).getRateToBase();
         PyCurrency testUsd = new PyCurrency(10000, usdType);
         PyCurrency testAud = new PyCurrency(10869, audType); //1 AUD
 
-        assertEquals(testAud, PyCurrencyUtil.createCurrency(testUsd.getValue(), testUsd.getType(),
-            audType)); //.toPyCurrencyFromValue(10000),testAud); //10000 = 10000
+        assertThat(testAud).isEqualTo(
+            PyCurrencyUtil.createCurrency(testUsd.getValue(), testUsd.getType(),
+                audType));
 
     }
-
-    /**
-     * Create a new user and insert into DB
-     */
-    public void testInsertUsers() {
-        this.log.info("Running Test Insert Users");
-    }
-
 
     /**
      * This test assumes that the default test data is in the DB
      */
     public void testInsertTraders() {
-
         this.log.info("Running Test Insert Traders");
 
-        //Must have a session
-        assertNotNull(this.sesh);
-
-        //Get the types from the DB
-        PyCurrencyTypeHibernation pycth = new PyCurrencyTypeHibernation();
-
-        TraderHibernation th = new TraderHibernation();
-
         //GENERATE THE AUD BUYERS
-        assertNotNull(this.audBuyers);
+        assertThat(this.audBuyers).isNotNull();
 
         //Put em in the DB
-        this.audBuyers = th.merge(this.audBuyers);
-        assertNotNull(this.audBuyers);
-
-        for (int i = 0; i < this.audBuyers.size(); i++) {
-            String buying = this.conv.getAsString(null, null,
-                this.audBuyers.get(i).getCurrencyToBuy());
-            String selling = this.conv.getAsString(null, null,
-                this.audBuyers.get(i).getCurrencyToSell());
-            this.log.info("Inserted AUD Buyer with id: " + this.audBuyers.get(i).getTraderid() +
-                " buying " + buying + " selling " + selling);
-
-        }
+        this.audBuyers = this.audBuyers.stream().map(t -> {
+            return traderService.save(t).get();
+        }).collect(Collectors.toList());
+        assertThat(this.audBuyers).isNotNull();
 
         TraderGroupUtil audBuyerUtil = null;
         //Test the Util Group
@@ -256,7 +206,7 @@ public class TradeTest {
             audBuyerUtil = new TraderGroupUtil(this.audBuyers);
         } catch (Exception e) {
             this.log.error("Couldn't Create AUD Util Group", e);
-            fail();
+            fail(e.getMessage());
         }
 
         long audBuyerSelling = 0;
@@ -268,27 +218,19 @@ public class TradeTest {
         }
 
         //Check the values of the group
-        assertEquals(audBuyerUtil.getCurrencyToBuy().getValue(),
+        assertThat(audBuyerUtil.getCurrencyToBuy().getValue()).isEqualTo(
             audBuyerBuying); //To check if we have other traders in DB
-        assertEquals(audBuyerUtil.getCurrencyToSell().getValue(),
+        assertThat(audBuyerUtil.getCurrencyToSell().getValue()).isEqualTo(
             audBuyerSelling); //Just to confirm that the util group works
 
         //GENERATE THE USD BUYERS
-        assertNotNull(this.usdBuyers);
+        assertThat(this.usdBuyers).isNotNull();
 
         //Put em in the DB
-        this.usdBuyers = th.merge(this.usdBuyers);
-        assertNotNull(this.usdBuyers);
-
-        for (int i = 0; i < this.usdBuyers.size(); i++) {
-            String buying = this.conv.getAsString(null, null,
-                this.usdBuyers.get(i).getCurrencyToBuy());
-            String selling = this.conv.getAsString(null, null,
-                this.usdBuyers.get(i).getCurrencyToSell());
-            this.log.info("Inserted USD buyer with id: " + this.usdBuyers.get(i).getTraderid() +
-                " buying " + buying + " selling " + selling);
-
-        }
+        this.usdBuyers.stream().map(t -> {
+            return traderService.save(t).get();
+        }).collect(Collectors.toList());
+        assertThat(this.usdBuyers).isNotNull();
 
         //Test the Util Groups ability to sum values
         TraderGroupUtil usdBuyerUtil = null;
@@ -297,7 +239,7 @@ public class TradeTest {
             usdBuyerUtil = new TraderGroupUtil(this.usdBuyers);
         } catch (Exception e) {
             this.log.error("Couldn't Create USD Util Group", e);
-            fail();
+            fail(e.getMessage());
         }
 
         long usdBuyerSelling = 0;
@@ -309,10 +251,8 @@ public class TradeTest {
         }
 
         //Check the values of the group
-        assertEquals(usdBuyerUtil.getCurrencyToBuy().getValue(), usdBuyerBuying);
-        assertEquals(usdBuyerUtil.getCurrencyToSell().getValue(), usdBuyerSelling);
-
-
+        assertThat(usdBuyerUtil.getCurrencyToBuy().getValue()).isEqualTo(usdBuyerBuying);
+        assertThat(usdBuyerUtil.getCurrencyToSell().getValue()).isEqualTo(usdBuyerSelling);
     }
 
     /**
@@ -566,7 +506,7 @@ public class TradeTest {
 
         } catch (Exception e) {
             this.log.error("Unable to Test Aud Bank Deposits.", e);
-            fail();
+            fail(e.getMessage());
         }
 
     }

@@ -4,7 +4,7 @@ import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
 import com.plushpay.repository.trader.Trader;
 import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.repository.user.User;
-import com.plushpay.service.currency.CurrencyService;
+import com.plushpay.service.currency.CurrencyTypeService;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
@@ -16,12 +16,16 @@ import java.util.List;
 import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.stereotype.Component;
 
 /**
  * This class will simulate traders inserting trades into the DB.
  *
  * @author tpacker
  */
+@ConditionalOnProperty(value = "com.plushpay.simulation.enabled", havingValue = "true")
+@Component
 public class TradersSimulation extends Thread {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -31,14 +35,14 @@ public class TradersSimulation extends Thread {
     private volatile boolean shutdown;
 
     private final UserService userService;
-    private final CurrencyService currencyService;
+    private final CurrencyTypeService currencyTypeService;
     private final TraderService traderService;
 
-    public TradersSimulation(UserService userService, CurrencyService currencyService,
+    public TradersSimulation(UserService userService, CurrencyTypeService currencyTypeService,
         TraderService traderServic) {
         super("Trader Simulation");
         this.userService = userService;
-        this.currencyService = currencyService;
+        this.currencyTypeService = currencyTypeService;
         this.traderService = traderServic;
     }
 
@@ -93,8 +97,8 @@ public class TradersSimulation extends Thread {
         List<Trader> traders;
         long cents;
         // Load a rate change if necessary
-        PyCurrencyType usdType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
-        PyCurrencyType audType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         //Create one trader for each user each time around
         for (int i = 0; i < users.size(); i++) {
@@ -147,8 +151,8 @@ public class TradersSimulation extends Thread {
     public List<Trader> createNewTraders(User user, List<PyCurrency> toBuy) throws Exception {
 
         // Load a rate change if necessary
-        PyCurrencyType usdType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
-        PyCurrencyType audType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         //Currencies for trader
         PyCurrency currencyToSell;

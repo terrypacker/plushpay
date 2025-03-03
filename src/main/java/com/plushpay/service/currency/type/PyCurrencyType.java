@@ -30,7 +30,7 @@ public class PyCurrencyType implements IdEntity<Long> {
     }
 
     public PyCurrencyType(CurrencyCodeEnum code, long rateToBase,
-        String symbol, ZonedDateTime date, boolean base) {
+        ZonedDateTime date, boolean base) {
         this.code = code;
         this.rateToBase = rateToBase;
         this.date = date;

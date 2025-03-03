@@ -1,6 +1,7 @@
 package com.plushpay.service.currency;
 
 import com.plushpay.repository.currency.CurrencyTypeRepository;
+import com.plushpay.service.AbstractPlushPayService;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
 import java.time.ZonedDateTime;
@@ -10,12 +11,11 @@ import org.springframework.stereotype.Service;
  * @author Terry Packer
  */
 @Service
-public class CurrencyService {
+public class CurrencyTypeService extends
+    AbstractPlushPayService<PyCurrencyType, Long, CurrencyTypeRepository> {
 
-    private final CurrencyTypeRepository currencyTypeRepository;
-
-    public CurrencyService(CurrencyTypeRepository currencyTypeRepository) {
-        this.currencyTypeRepository = currencyTypeRepository;
+    public CurrencyTypeService(CurrencyTypeRepository currencyTypeRepository) {
+        super(currencyTypeRepository);
     }
 
     public PyCurrencyType getCurrentCurrencyType(CurrencyCodeEnum currencyCode) {
@@ -35,6 +35,6 @@ public class CurrencyService {
 
 
     public PyCurrencyType getBaseCurrencyType() {
-        return currencyTypeRepository.getBaseCurrencyType();
+        return repository.getBaseCurrencyType();
     }
 }

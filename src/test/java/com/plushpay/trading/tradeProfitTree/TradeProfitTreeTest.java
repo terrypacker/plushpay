@@ -6,6 +6,10 @@ import static org.assertj.core.api.Fail.fail;
 import com.plushpay.repository.beneficiary.Beneficiary;
 import com.plushpay.repository.beneficiary.details.BeneficiaryDetails;
 import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
+import com.plushpay.repository.trader.Trader;
+import com.plushpay.repository.trader.TraderStatus;
+import com.plushpay.repository.tradergroup.TraderGroup;
+import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import com.plushpay.repository.user.User;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
@@ -13,10 +17,6 @@ import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
 import com.plushpay.service.trading.tradeProfitTree.TradeProfitNode;
 import com.plushpay.service.trading.tradeProfitTree.TradeProfitTree;
-import com.plushpay.repository.trader.Trader;
-import com.plushpay.repository.trader.TraderStatus;
-import com.plushpay.repository.tradergroup.TraderGroup;
-import com.plushpay.repository.tradergroup.TraderGroupUtil;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class TradeProfitTreeTest {
         beneficiaries.add(audBene);
 
         User user = new User(null, "tpacker",
-            "shithead", "tpacker@mail2nebraska.com", true,
+            "password", "tpacker@mail2nebraska.com", true,
             beneficiaries);
 
         PyCurrency currencyToBuy = new PyCurrency(10000, audType); //Buying AUD
@@ -94,7 +94,7 @@ public class TradeProfitTreeTest {
         TraderGroup group = null;
 
         Trader buyer = new Trader(group, user, currencyToBuy,
-            currencyToSell, TraderStatus.CONFIRMED.name(),
+            currencyToSell, TraderStatus.CONFIRMED,
             tradeBenies);
 
         try {

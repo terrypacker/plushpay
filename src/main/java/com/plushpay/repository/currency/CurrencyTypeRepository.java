@@ -18,6 +18,6 @@ public class CurrencyTypeRepository extends AbstractInMemoryRepository<PyCurrenc
     }
 
     public PyCurrencyType getBaseCurrencyType() {
-        return new PyCurrencyType(CurrencyCodeEnum.USD, 10000, ZonedDateTime.now());
+        return new PyCurrencyType(CurrencyCodeEnum.USD, 10000, ZonedDateTime.now(), true);
     }
 }

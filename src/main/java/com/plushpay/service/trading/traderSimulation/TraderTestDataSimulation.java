@@ -4,7 +4,7 @@ import com.plushpay.repository.beneficiary.tradeBeneficiary.TradeBeneficiary;
 import com.plushpay.repository.trader.Trader;
 import com.plushpay.repository.trader.TraderStatus;
 import com.plushpay.repository.user.User;
-import com.plushpay.service.currency.CurrencyService;
+import com.plushpay.service.currency.CurrencyTypeService;
 import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
@@ -30,16 +30,17 @@ public class TraderTestDataSimulation extends Thread {
     private int dataPos;
 
     private final UserService userService;
-    private final CurrencyService currencyService;
+    private final CurrencyTypeService currencyTypeService;
     private final TraderService traderService;
 
 
-    public TraderTestDataSimulation(UserService userService, CurrencyService currencyService,
+    public TraderTestDataSimulation(UserService userService,
+        CurrencyTypeService currencyTypeService,
         TraderService traderService) {
         super("Trader Test Data Simulation");
         this.pollPeriod = 5000;
         this.userService = userService;
-        this.currencyService = currencyService;
+        this.currencyTypeService = currencyTypeService;
         this.traderService = traderService;
         this.data = new TraderTestData();
 
@@ -107,8 +108,8 @@ public class TraderTestDataSimulation extends Thread {
         List<Trader> traders;
 
         // Load a rate change if necessary
-        PyCurrencyType usdType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
-        PyCurrencyType audType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         // Create one trader for each user each time around
         for (int i = 0; i < users.size(); i++) {
@@ -155,8 +156,8 @@ public class TraderTestDataSimulation extends Thread {
     public List<Trader> createNewTraders(User user, List<PyCurrency> toBuy)
         throws Exception {
 
-        PyCurrencyType usdType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
-        PyCurrencyType audType = currencyService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
         // Currencies for trader
         PyCurrency currencyToSell;
