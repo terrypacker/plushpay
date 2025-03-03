@@ -98,5 +98,27 @@ public class TraderRepository extends AbstractInMemoryRepository<Trader, Long> {
             return t.getGroup() == null;
         });
     }
+
+    /**
+     * Get un grouped traders for a trade between 2 currencies.
+     *
+     * @param buying
+     * @param selling
+     * @return
+     */
+    public Stream<Trader> getFreeTraders(CurrencyCodeEnum buying, CurrencyCodeEnum selling) {
+        return this.rows.stream().filter(t -> {
+            if (t.getGroup() == null) {
+                if (t.getCurrencyToSell().getType().getCode() == selling
+                    || t.getCurrencyToBuy().getType().getCode() == buying) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        });
+    }
 }
 

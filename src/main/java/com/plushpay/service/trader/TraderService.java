@@ -45,4 +45,8 @@ public class TraderService extends AbstractPlushPayService<Trader, Long, TraderR
     public Stream<Trader> getFreeTraders() {
         return repository.getFreeTraders();
     }
+
+    public Stream<Trader> getFreeTraders(CurrencyCodeEnum buying, CurrencyCodeEnum selling) {
+        return repository.getFreeTraders(buying, selling);
+    }
 }

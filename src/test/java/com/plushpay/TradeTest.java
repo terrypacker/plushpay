@@ -2,7 +2,6 @@ package com.plushpay;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.Fail.fail;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.plushpay.repository.trade.Trade;
 import com.plushpay.repository.trade.TradeStatus;
@@ -20,9 +19,9 @@ import com.plushpay.service.currency.PyCurrency;
 import com.plushpay.service.currency.PyCurrencyUtil;
 import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
+import com.plushpay.service.trade.TradeService;
 import com.plushpay.service.trader.TraderService;
-import com.plushpay.service.trading.trader.TraderHibernation;
-import com.plushpay.service.trading.trader.group.TraderGroupHibernation;
+import com.plushpay.service.tradergroup.TraderGroupService;
 import com.plushpay.service.trading.traderSimulation.TradersSimulation;
 import com.plushpay.service.user.UserService;
 import java.time.ZonedDateTime;
@@ -56,6 +55,18 @@ public class TradeTest {
     private TraderService traderService;
     @Autowired
     private TradersSimulation tradersSimulation;
+    @Autowired
+    AudTraderDepositSimulator audTraderDepositSimulator;
+    @Autowired
+    AudBankSimulator audBankSimulator;
+    @Autowired
+    private TraderGroupService traderGroupService;
+    @Autowired
+    private TradeService tradeService;
+    @Autowired
+    AudTradeCreditManager audTradeCreditManager;
+    @Autowired
+    AudTradeDebitManager audTradeDebitManager;
 
     public TradeTest() {
 
@@ -262,24 +273,21 @@ public class TradeTest {
     public void testCreateTrade() {
 
         this.log.info("Running Test Create Trade");
-        //Get the currency Types
-        //Get the types from the DB
-        PyCurrencyTypeHibernation pycth = new PyCurrencyTypeHibernation();
+        PyCurrencyType usdType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType audType = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
-        //Load the Types from the DB
-        PyCurrencyType audType = pycth.getCurrentAud();
-        PyCurrencyType usdType = pycth.getCurrentUsd();
-
-        assertNotNull(audType);
-        assertNotNull(usdType);
+        assertThat(audType).isNotNull();
+        assertThat(usdType).isNotNull();
 
         //Load in the trades from the DB
-        TraderHibernation th = new TraderHibernation();
-        List<Trader> audBuyers = th.loadFreeTraders(audType, usdType);
-        List<Trader> usdBuyers = th.loadFreeTraders(usdType, audType);
+        List<Trader> audBuyers = traderService.getFreeTraders(audType.getCode(), usdType.getCode())
+            .toList();
+        List<Trader> usdBuyers = traderService.getFreeTraders(usdType.getCode(), audType.getCode())
+            .toList();
 
-        assertNotNull(audBuyers);
-        assertNotNull(usdBuyers);
+        assertThat(audBuyers).isNotNull();
+        assertThat(usdBuyers).isNotNull();
+
         TraderGroupUtil audBuyerUtil = null;
         TraderGroupUtil usdBuyerUtil = null;
         //Create a Buyers Trader Group
@@ -287,61 +295,42 @@ public class TradeTest {
             audBuyerUtil = new TraderGroupUtil(audBuyers);
         } catch (Exception e) {
             this.log.error("Couldn't Create AUD Util Group", e);
-            fail();
+            fail(e.getMessage());
         }
 
         try {
             usdBuyerUtil = new TraderGroupUtil(usdBuyers);
         } catch (Exception e) {
             this.log.error("Couldn't Create USD Util Group", e);
-            fail();
+            fail(e.getMessage());
         }
 
         TraderGroup audBuyerGroup = new TraderGroup(audBuyerUtil.getCurrencyToSell(),
             audBuyerUtil.getCurrencyToBuy(), audBuyers);
 
-        assertNotNull(audBuyerGroup);
+        assertThat(audBuyerGroup).isNotNull();
 
         TraderGroup usdBuyerGroup = new TraderGroup(usdBuyerUtil.getCurrencyToSell(),
             usdBuyerUtil.getCurrencyToBuy(), usdBuyers);
-        assertNotNull(usdBuyerGroup);
+        assertThat(usdBuyerGroup).isNotNull();
 
-        TraderGroupHibernation tgh = new TraderGroupHibernation();
-
-        audBuyerGroup = tgh.mergeAndUpdateMembers(audBuyerGroup);
-
-        usdBuyerGroup = tgh.mergeAndUpdateMembers(usdBuyerGroup);
-
-        String buying = this.conv.getAsString(null, null, audBuyerGroup.getCurrencyToBuy());
-        String selling = this.conv.getAsString(null, null, audBuyerGroup.getCurrencyToSell());
-
-        this.log.info(
-            "Created AUD Buying Group: " + audBuyerGroup.getId() + " Buying " + buying
-                + " Selling " + selling);
-
-        buying = this.conv.getAsString(null, null, usdBuyerGroup.getCurrencyToBuy());
-        selling = this.conv.getAsString(null, null, usdBuyerGroup.getCurrencyToSell());
-        this.log.info(
-            "Created USD Buying Group: " + usdBuyerGroup.getId() + " Buying " + buying
-                + " Selling " + selling);
+        audBuyerGroup = traderGroupService.save(audBuyerGroup).get();
+        usdBuyerGroup = traderGroupService.save(usdBuyerGroup).get();
 
         //Load traders again and check their group IDs
-        List<Trader> traders = th.loadTradersWithGroupId(audBuyerGroup.getId());
-        assertNotNull(traders);
+        List<Trader> audBuyersInGroup = traderService.getWithGroupId(audBuyerGroup.getId())
+            .toList();
+        assertThat(audBuyersInGroup).isNotNull();
 
-        traders = th.loadTradersWithGroupId(usdBuyerGroup.getId());
+        List<Trader> usdBuyersInGroup = traderService.getWithGroupId(usdBuyerGroup.getId())
+            .toList();
+        assertThat(usdBuyersInGroup).isNotNull();
 
         Trade newTrade = new Trade(usdBuyerGroup, audBuyerGroup, Calendar.getInstance(),
-            TradeStatus.DEPOSIT.name());
+            TradeStatus.DEPOSIT);
 
-        TradeHibernation tradeHibernation = new TradeHibernation();
-        newTrade = tradeHibernation.merge(newTrade);
-
-        assertNotNull(newTrade);
-
-        this.log.info("Created Trade with ID: " + newTrade.getTradeId());
-
-
+        newTrade = tradeService.save(newTrade).get();
+        assertThat(newTrade.getId()).isNotNull();
     }
 
     /**
@@ -350,21 +339,16 @@ public class TradeTest {
     public void testTraderDepositFunds() {
 
         //First Collect all Traders that are ready for deposit
-        AudTraderDepositSimulator sim = AudTraderDepositSimulator.getAudTraderDeptositSimulator();
-
-        TraderHibernation th = new TraderHibernation();
-
-        //Get the traders to compare to
-        List<Trader> traders = th.loadTradersSelling(new ArrayList<Long>(), TraderStatus.DEPOSIT,
-            CurrencyCodeEnum.AUD);
-
-        TradeTest.assertNotSame(0, traders.size());
+        List<Trader> traders = traderService.getSelling(TraderStatus.DEPOSIT,
+            CurrencyCodeEnum.AUD).toList();
+        assertThat(traders).isNotNull();
+        assertThat(traders.size()).isGreaterThan(0);
 
         try {
-            sim.simulateDeposits(traders);
+            audTraderDepositSimulator.simulateDeposits(traders);
         } catch (Exception e) {
             this.log.error("Unable to simulate deposits.", e);
-            fail();
+            fail(e.getMessage());
         }
     }
 
@@ -373,15 +357,13 @@ public class TradeTest {
      * an NAI file describing them.
      */
     public void testBankCreditFunds() {
-
-        AudBankSimulator sim = AudBankSimulator.getAudBankSimulator();
         try {
-            sim.checkAndProcessNewFile();
+            audBankSimulator.checkAndProcessNewFile();
         } catch (Exception e1) {
             this.log.error("Unable to process new file.", e1);
-            fail();
+            fail(e1.getMessage());
         }
-        this.log.info(sim.getAccountBalance());
+        this.log.info(audBankSimulator.getAccountBalance());
 
         //Total up the AUD being sold
         PyCurrency aud = this.usdBuyers.get(0).getCurrencyToSell();
@@ -392,7 +374,7 @@ public class TradeTest {
             }
         } catch (Exception e) {
             this.log.error("Unable to test bank credits.", e);
-            fail();
+            fail(e.getMessage());
 
         }
 
@@ -400,60 +382,53 @@ public class TradeTest {
         aud = PyCurrencyUtil.roundCurrency(aud);
 
         try {
-            sim.outputNaiFile();
+            audBankSimulator.outputNaiFile();
         } catch (Exception e) {
             this.log.error("AUD Bank unable to output NAI File.", e);
-            fail();
+            fail(e.getMessage());
         }
 
-        assertEquals(this.conv.getAsString(null, null, aud), sim.getAccountBalance());
-
+        assertThat(audBankSimulator.getAccountBalance()).isNotNull();
+        assertThat(aud.getValue()).isEqualTo(audBankSimulator.getAccountBalance());
     }
 
     public void testAudTradeCreditManagerProcessFiles() {
         this.log.info("Running Test Aud Trade Credit Manager Process Files");
-        AudTradeCreditManager man = AudTradeCreditManager.getAudTradeCreditManager();
         try {
-            man.processNewFiles();
+            audTradeCreditManager.processNewFiles();
         } catch (Exception e) {
             this.log.error("Failed Processing Trade Credit File.", e);
-            fail();
+            fail(e.getMessage());
         }
     }
 
     public void testAudTradeCreditManagerFinalizeTrade() {
         this.log.info("Running Test Aud Trade Credit Manager Finalize Trade");
-        AudTradeCreditManager man = AudTradeCreditManager.getAudTradeCreditManager();
-        man.processOpenTrades();
+        audTradeCreditManager.processOpenTrades();
 
         //Now check to see if we have a finalized trade in db
-        TradeHibernation th = new TradeHibernation();
-        List<Trade> trades = th.loadAllWithStatus(TradeStatus.CLOSED);
-
-        assertNotSame(0, trades.size());
-
+        List<Trade> trades = tradeService.getAllWithStatus(TradeStatus.CLOSED).toList();
+        assertThat(trades).isNotNull();
+        assertThat(trades.size()).isGreaterThan(0);
     }
 
     public void testAudTradeDebitManagerProcessDebits() {
-        AudTradeDebitManager man = AudTradeDebitManager.getAudTradeDebitManager();
-
         try {
-            man.processTradeDebits();
+            audTradeDebitManager.processTradeDebits();
         } catch (Exception e) {
             this.log.error("Unable to process trade debits.", e);
-            fail();
+            fail(e.getMessage());
         }
 
 
     }
 
     public void testAudBankDeposits() {
-        AudBankSimulator sim = AudBankSimulator.getAudBankSimulator();
         try {
-            sim.checkAndProcessNewFile();
+            audBankSimulator.checkAndProcessNewFile();
         } catch (Exception e) {
             this.log.error("Unable to Test Aud Bank Deposits.", e);
-            fail();
+            fail(e.getMessage());
         }
 
         //Total up what we should see in the account
@@ -472,25 +447,22 @@ public class TradeTest {
 
             aud = PyCurrencyUtil.roundCurrency(aud); //Round it to compare with bank
 
-            String accountBalance = sim.getAccountBalance();
-            String total = this.conv.getAsString(null, null, aud);
-            assertEquals(accountBalance, total);
+            PyCurrency accountBalance = audBankSimulator.getAccountBalance();
+            assertThat(accountBalance).isNotNull();
+            assertThat(accountBalance.getValue()).isEqualTo(aud.getValue());
         } catch (Exception e) {
             this.log.error("Unable to Test Aud Bank Deposits.", e);
-            fail();
+            fail(e.getMessage());
         }
-
-
     }
 
 
     public void testTotalTrade() {
-        AudBankSimulator sim = AudBankSimulator.getAudBankSimulator();
         try {
-            sim.checkAndProcessNewFile();
+            audBankSimulator.checkAndProcessNewFile();
         } catch (Exception e) {
             this.log.error("Unable to Test Aud Bank Deposits.", e);
-            fail();
+            fail(e.getMessage());
         }
 
         //Total up what we should see in the account
@@ -508,8 +480,5 @@ public class TradeTest {
             this.log.error("Unable to Test Aud Bank Deposits.", e);
             fail(e.getMessage());
         }
-
     }
-
-
 }
