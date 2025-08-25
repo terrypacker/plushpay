@@ -1,18 +1,22 @@
 package com.plushpay.service.trading.exact.tree;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.plushpay.repository.trader.Trader;
 import com.plushpay.repository.tradergroup.TraderGroupUtil;
+import com.plushpay.service.currency.CurrencyService;
+import com.plushpay.service.currency.CurrencyTypeService;
 import com.plushpay.service.currency.PyCurrency;
-import com.plushpay.service.currency.PyCurrencyUtil;
+import com.plushpay.service.currency.code.CurrencyCodeEnum;
 import com.plushpay.service.currency.type.PyCurrencyType;
 import com.plushpay.service.trade.TradeService;
 import com.plushpay.service.trader.TraderService;
 import com.plushpay.service.tradergroup.TraderGroupService;
-import com.plushpay.service.trading.tree.TraderCombinationNode;
-import com.plushpay.service.trading.tree.TraderCombinationRedBlackTree;
 import com.plushpay.service.trading.tree.TraderCombinationRedBlackTreeManager;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -20,7 +24,17 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Terry Packer
  */
 @SpringBootTest
-public class TraderCombinationRedBlackTreeTest {
+class TraderCombinationRedBlackTreeTest {
+
+    private Log log = LogFactory.getLog(TraderCombinationRedBlackTreeTest.class);
+    private PyCurrencyType buyingCurrency;
+    private PyCurrencyType sellingCurrency;
+    private float trimWithin;
+
+    @Autowired
+    private CurrencyTypeService currencyTypeService;
+    @Autowired
+    private CurrencyService currencyService;
 
     @Autowired
     private TradeService tradeService;
@@ -32,190 +46,142 @@ public class TraderCombinationRedBlackTreeTest {
     /**
      * Test simulation
      */
-    public void test() {
+    void test() {
 
-        String usdCode = "USD";
-        long usdRateToBase = 10000;
-        String usdSymbol = "$";
-        PyCurrencyType usd = new PyCurrencyType(usdCode, usdRateToBase, usdSymbol);
+        PyCurrencyType usd = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.USD);
+        PyCurrencyType aud = currencyTypeService.getCurrentCurrencyType(CurrencyCodeEnum.AUD);
 
-        String audCode = "AUD";
-        long audRateToBase = 10000;
-        String audSymbol = "$";
-        PyCurrencyType aud = new PyCurrencyType(audCode, audRateToBase, audSymbol);
-
-        /*Create the util */
-        PyCurrencyUtil audUtil = new PyCurrencyUtil(aud);
-        PyCurrencyUtil usdUtil = new PyCurrencyUtil(usd);
+        this.buyingCurrency = aud;
+        this.sellingCurrency = usd;
 
         /* Setup Group 1 To Buy AUD and Sell USD*/
 
         /* Fill group 1 */
         TraderGroupUtil buyerUtil = new TraderGroupUtil(aud, usd);
-        User buyerUser = new User("tpacker", "Terry", "Packer", "shithead",
-            "tpacker@terrypacker.com");
         List<Trader> buyers = new ArrayList<Trader>();
 
-
-        /* Generate a The buyer values */
-        PyCurrency toBuy = audUtil.toPyCurrencyFromValue(104);
-        PyCurrency toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        Trader newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        //Setup Trader 1 to buy AUD and sell USD
+        Trader audUsdTrader1 = new Trader();
+        PyCurrency buyAudUsd1 = new PyCurrency(104, aud);
+        PyCurrency sellAudUsd1 = currencyService.convertCurrency(buyAudUsd1, usd);
+        audUsdTrader1.setCurrencyToBuy(buyAudUsd1);
+        audUsdTrader1.setCurrencyToSell(sellAudUsd1);
         try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
+            buyerUtil.add(audUsdTrader1);
+            buyers.add(audUsdTrader1);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = audUtil.toPyCurrencyFromValue(102);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        //Setup trader 2
+        Trader audUsdTrader2 = new Trader();
+        PyCurrency buyAudUsd2 = new PyCurrency(102, aud);
+        PyCurrency sellAudUsd2 = currencyService.convertCurrency(buyAudUsd2, usd);
+        audUsdTrader2.setCurrencyToBuy(buyAudUsd2);
+        audUsdTrader2.setCurrencyToSell(sellAudUsd2);
         try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
+            buyerUtil.add(audUsdTrader2);
+            buyers.add(audUsdTrader2);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = audUtil.toPyCurrencyFromValue(201);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        //Setup trader 3
+        Trader audUsdTrader3 = new Trader();
+        PyCurrency buyAudUsd3 = new PyCurrency(201, aud);
+        PyCurrency sellAudUsd3 = currencyService.convertCurrency(buyAudUsd3, usd);
+        audUsdTrader3.setCurrencyToBuy(buyAudUsd3);
+        audUsdTrader3.setCurrencyToSell(sellAudUsd3);
         try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
+            buyerUtil.add(audUsdTrader3);
+            buyers.add(audUsdTrader3);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = audUtil.toPyCurrencyFromValue(101);
-        toSell = usdUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        //Setup trader 4
+        Trader audUsdTrader4 = new Trader();
+        PyCurrency buyAudUsd4 = new PyCurrency(101, aud);
+        PyCurrency sellAudUsd4 = currencyService.convertCurrency(buyAudUsd4, usd);
+        audUsdTrader4.setCurrencyToBuy(buyAudUsd4);
+        audUsdTrader4.setCurrencyToSell(sellAudUsd4);
         try {
-            buyerUtil.add(newTrader);
-            buyers.add(newTrader);
+            buyerUtil.add(audUsdTrader4);
+            buyers.add(audUsdTrader4);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
-
-
-
 
         /* Setup group 2 To Buy USD and Sell AUD */
         TraderGroupUtil sellerUtil = new TraderGroupUtil(usd, aud);
         List<Trader> sellers = new ArrayList<Trader>();
-        User sellerUser = new User("jallemann", "Jeanne", "Allemann", "shithead",
-            "jeanneallemann@hotmail.com");
 
-        toBuy = usdUtil.toPyCurrencyFromValue(101);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        PyCurrency buyUsdAud1 = new PyCurrency(101, usd);
+        PyCurrency sellUsdAud1 = currencyService.convertCurrency(buyUsdAud1, aud);
+        Trader usdAudTrader1 = new Trader();
+        usdAudTrader1.setCurrencyToBuy(buyUsdAud1);
+        usdAudTrader1.setCurrencyToSell(sellUsdAud1);
         try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
+            sellerUtil.add(usdAudTrader1);
+            sellers.add(usdAudTrader1);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = usdUtil.toPyCurrencyFromValue(102);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        PyCurrency buyUsdAud2 = new PyCurrency(102, usd);
+        PyCurrency sellUsdAud2 = currencyService.convertCurrency(buyUsdAud2, aud);
+        Trader usdAudTrader2 = new Trader();
+        usdAudTrader1.setCurrencyToBuy(buyUsdAud2);
+        usdAudTrader1.setCurrencyToSell(sellUsdAud2);
         try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
+            sellerUtil.add(usdAudTrader2);
+            sellers.add(usdAudTrader2);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = usdUtil.toPyCurrencyFromValue(201);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        PyCurrency buyUsdAud3 = new PyCurrency(201, usd);
+        PyCurrency sellUsdAud3 = currencyService.convertCurrency(buyUsdAud3, aud);
+        Trader usdAudTrader3 = new Trader();
+        usdAudTrader3.setCurrencyToBuy(buyUsdAud3);
+        usdAudTrader3.setCurrencyToSell(sellUsdAud3);
         try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
+            sellerUtil.add(usdAudTrader3);
+            sellers.add(usdAudTrader3);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        toBuy = usdUtil.toPyCurrencyFromValue(101);
-        toSell = audUtil.toPyCurrencyFromBaseValue(toBuy.getBaseValue());
-        newTrader = new Trader();
-        newTrader.setCurrencyToBuy(toBuy);
-        newTrader.setCurrencyToSell(toSell);
+        PyCurrency buyUsdAud4 = new PyCurrency(101, usd);
+        PyCurrency sellUsdAud4 = currencyService.convertCurrency(buyUsdAud4, aud);
+        Trader usdAudTrader4 = new Trader();
+        usdAudTrader4.setCurrencyToBuy(buyUsdAud4);
+        usdAudTrader4.setCurrencyToSell(sellUsdAud4);
         try {
-            sellerUtil.add(newTrader);
-            sellers.add(newTrader);
+            sellerUtil.add(usdAudTrader4);
+            sellers.add(usdAudTrader4);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        TraderCombinationRedBlackTreeManager manager = new TraderCombinationRedBlackTreeManager();
+        TraderCombinationRedBlackTreeManager manager = new TraderCombinationRedBlackTreeManager(
+            tradeService,
+            traderService,
+            traderGroupService,
+            buyingCurrency,
+            sellingCurrency);
 
         this.trimWithin = .000000001f;
 
-        this.buyingCurrency = aud;
-        this.sellingCurrency = usd;
-
-        PyCurrency buyZero = new PyCurrency();
-        buyZero.setType(this.buyingCurrency);
-        buyZero.setValue(0);
-        buyZero.setBaseValue(0);
-
-        PyCurrency sellZero = new PyCurrency();
-        sellZero.setType(this.sellingCurrency);
-        sellZero.setValue(0);
-        sellZero.setBaseValue(0);
-
-        Trader zeroBuyer = new Trader();
-        zeroBuyer.setCurrencyToBuy(buyZero);
-        zeroBuyer.setCurrencyToSell(sellZero);
-
-        Trader zeroSeller = new Trader();
-        zeroSeller.setCurrencyToBuy(sellZero);
-        zeroSeller.setCurrencyToSell(buyZero);
-
-        TraderGroupUtil zeroBuyers = new TraderGroupUtil(zeroBuyer);
-        TraderGroupUtil zeroSellers = new TraderGroupUtil(zeroSeller);
-        TraderCombinationNode zeroNode = new TraderCombinationNode(zeroBuyers, zeroSellers);
-
-        this.log = Logger.getLogger(this.getClass());
         this.log.info("Starting Trade Tree Thread.");
-
-        this.currentBuyers = new ArrayList<Trader>();
-        this.currentSellers = new ArrayList<Trader>();
-        this.tree = new TraderCombinationRedBlackTree();//new TraderCombinationsTree(zeroNode);
-        this.tree.put(0, zeroNode);
-
         try {
-            this.insertBuyers(buyers);
-            this.insertSellers(sellers);
+            manager.insertBuyers(buyers);
+            manager.insertSellers(sellers);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
-        this.tree.printKeys();
+        //TODO Finish this test
+
     }
 }

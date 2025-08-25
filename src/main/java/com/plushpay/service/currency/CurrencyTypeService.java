@@ -33,7 +33,6 @@ public class CurrencyTypeService extends
         }
     }
 
-
     public PyCurrencyType getBaseCurrencyType() {
         return repository.getBaseCurrencyType();
     }

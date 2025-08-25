@@ -115,6 +115,7 @@ public class PyCurrency implements Comparable, IdEntity<Long> {
     }
 
     /**
+     * TODO Move to currency service
      * Add 2 PyCurrencies of the same type.
      *
      * @param addend
@@ -137,6 +138,7 @@ public class PyCurrency implements Comparable, IdEntity<Long> {
     }
 
     /**
+     * TODO Move to currency service
      * Subtract toSub from this PyCurrency
      *
      * @param toSub

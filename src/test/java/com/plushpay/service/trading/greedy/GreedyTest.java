@@ -1,40 +1,16 @@
 package com.plushpay.service.trading.greedy;
 
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import com.plushpay.persistence.PayYourselfDatasource;
-
+/**
+ * TODO Need to add test logic
+ */
 public class GreedyTest {
 
-	@Before
-	public void setUp() throws Exception {
-		
-		PayYourselfDatasource.bind(); //Bind the datasource for use outside of container
-		
-		
-	}
+    @Test
+    public void test() {
 
-	@After
-	public void tearDown() throws Exception {
-	}
+    }
 
-	@Test
-	public void runMainTest(){
-		
-		GreedyTradeManager.getGreedyTradeManager().startUp();
-		while(true){
-			//Run forever 
-			try {
-				Thread.sleep(50000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-	}
-	
 }

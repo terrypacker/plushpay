@@ -22,6 +22,7 @@ import com.plushpay.service.currency.type.PyCurrencyType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -29,7 +30,9 @@ import java.util.Calendar;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 
@@ -43,42 +46,51 @@ import org.springframework.stereotype.Component;
 public class AudBankSimulator extends Thread {
 
     private final Log log = LogFactory.getLog(getClass());
-    private String bsbNumber = "833-866";
-    private String accountNumber = "123456789";
-    private String pyCustomerId = "PYID";
-    private String bankId = "12345678";
-    private String accountTitle = "Pay Yourself Account";
+    private final String bsbNumber;
+    private final String accountNumber;
+    private final String pyCustomerId;
+    private final String bankId;
+    private final String accountTitle;
 
     private PyCurrency accountBalance; //In Aud cents
-    private PyCurrencyType type;
+    private final PyCurrencyType type;
 
 
-    private String folder; //Location on server where files will be dropped and picked up
+    private final File folder; //Location on server where files will be dropped and picked up
     private boolean shutdown; //Flag to shutdown thread;
 
-    private List<NaiTransactionDetail> transactions;
-    private List<NaiTransactionDetail> transactionHistory;
+    private final List<NaiTransactionDetail> transactions;
+    private final List<NaiTransactionDetail> transactionHistory;
 
-    private long pollPeriod;
+    private final long pollPeriod;
 
-    public AudBankSimulator() {
+    public AudBankSimulator(@Value("${com.plushpay.banking.storage}") Resource bankingDirectory,
+        @Value("${com.plushpay.simulation.banking.aud.rateToBase}") long rateToBase,
+        @Value("${com.plushpay.simulation.banking.aud.startingBalance}") long startingBalance,
+        @Value("${com.plushpay.simulation.banking.aud.bsb}") String bsb,
+        @Value("${com.plushpay.simulation.banking.aud.account}") String account,
+        @Value("${com.plushpay.simulation.banking.aud.customerId}") String customerId,
+        @Value("${com.plushpay.simulation.banking.aud.bank}") String bank,
+        @Value("${com.plushpay.simulation.banking.aud.accountName}") String accountName,
+        @Value("${com.plushpay.simulation.banking.period}") long pollPeriod)
+        throws IOException {
         super("Aud Bank Simulator");
 
         //Pick the folder location
-        this.folder = Thread.currentThread().getContextClassLoader().getResource("com")
-            .getPath(); //Get the directory to com
+        this.folder = bankingDirectory.getFile();
+        this.bsbNumber = bsb;
+        this.accountNumber = account;
+        this.pyCustomerId = customerId;
+        this.bankId = bank;
+        this.accountTitle = accountName;
 
-        //Move up to the nab folder in web root
-        this.folder = this.folder + "../../../nab/";
+        this.type = new PyCurrencyType(CurrencyCodeEnum.AUD, rateToBase, ZonedDateTime.now());
+        this.accountBalance = new PyCurrency(startingBalance, type);
 
-        this.type = new PyCurrencyType(CurrencyCodeEnum.AUD, 9200, ZonedDateTime.now());
-        this.accountBalance = new PyCurrency(0, type);
-
-        this.transactions = new ArrayList<NaiTransactionDetail>();
-        this.transactionHistory = new ArrayList<NaiTransactionDetail>();
+        this.transactions = new ArrayList<>();
+        this.transactionHistory = new ArrayList<>();
         this.shutdown = false;
-
-        this.pollPeriod = 5000;
+        this.pollPeriod = pollPeriod;
     }
 
 
@@ -109,7 +121,7 @@ public class AudBankSimulator extends Thread {
             this.transactionHistory.add(transactions.get(i));
         }
         //Clear out the transactions now
-        this.transactions = new ArrayList<NaiTransactionDetail>();
+        this.transactions.clear();
 
         //Add details to the account summary
         long sumTotA = 0;
@@ -241,12 +253,9 @@ public class AudBankSimulator extends Thread {
         if (this.transactions.size() == 0) {
             return;
         }
-
-        File dir = new File(this.folder);
-
         //Find if there is a Nai File
         NaiFileFilter naiFilter = new NaiFileFilter();
-        File[] naiFiles = dir.listFiles(naiFilter);
+        File[] naiFiles = folder.listFiles(naiFilter);
 
         //If there isn't one then generate one
         if (naiFiles.length == 0) {
@@ -303,13 +312,10 @@ public class AudBankSimulator extends Thread {
 
 
     public void checkAndProcessNewFile() throws Exception {
-
-        File dir = new File(this.folder);
-
         //Now do the direct entry files
 
         NabDirectEntryFileFilter directEntryFilter = new NabDirectEntryFileFilter();
-        File[] directEntryFiles = dir.listFiles(directEntryFilter);
+        File[] directEntryFiles = folder.listFiles(directEntryFilter);
 
         NabDirectEntryFileParser deParser = new NabDirectEntryFileParser();
         //Process each file
@@ -347,7 +353,6 @@ public class AudBankSimulator extends Thread {
     }
 
     public void startUp() {
-        //TODO Check thread state before starting
         this.shutdown = false;
         this.start();
     }

@@ -1,11 +1,14 @@
 package com.plushpay.service.banking.au.nab;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import com.plushpay.service.banking.au.AudBankSimulator;
 import com.plushpay.service.banking.au.nab.directEntry.NabDirectEntryFile;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabDirectEntryIndicator;
 import com.plushpay.service.banking.au.nab.directEntry.codes.NabTransactionCode;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabDetailRecord;
 import com.plushpay.service.banking.au.nab.directEntry.records.NabFileTotalRecord;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -18,10 +21,9 @@ public class AudBankSimulatorTest {
     @Autowired
     private AudBankSimulator audBankSimulator;
 
+    @Test
     public void test() {
-        AudBankSimulator sim = new AudBankSimulator();
-
-        System.out.println("Account Balance: " + sim.getAccountBalance());
+        System.out.println("Account Balance: " + audBankSimulator.getAccountBalance());
         NabDirectEntryFile file = new NabDirectEntryFile();
 
         String bsbNumber = audBankSimulator.getBsbNumber();
@@ -65,27 +67,24 @@ public class AudBankSimulatorTest {
         file.setTotalRecord(totalRecord);
 
         try {
-            sim.processTransactions(file);
+            audBankSimulator.processTransactions(file);
         } catch (Exception e2) {
-            // TODO Auto-generated catch block
-            e2.printStackTrace();
+            fail(e2.getMessage());
         }
 
-        System.out.println("Account Balance: " + sim.getAccountBalance());
+        System.out.println("Account Balance: " + audBankSimulator.getAccountBalance());
 
         try {
             System.out.println(
-                "Nai File Output:\n" + sim.generateNaiFile().getHeader().generateRecord());
+                "Nai File Output:\n" + audBankSimulator.generateNaiFile().getHeader().generateRecord());
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            fail(e.getMessage());
         }
 
         try {
             System.out.println("Nab Direct Entry File Output:\n" + file.generateFile());
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            fail(e1.getMessage());
         }
 
         /*Start the thread */
